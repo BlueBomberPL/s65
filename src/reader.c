@@ -124,11 +124,18 @@ static ihex_rec_t *_s65_parse_ihex(char *s_str)
             tmp_buf[0] = tmp_it[i];
             tmp_buf[1] = tmp_it[i + 1];
         }
+
         /* Trying to convert */
-        if(sscanf_s(tmp_buf, "%x", (BYTE *) &(phx_result->pd_data->pb_block[tmp_k])) < 1)
+        size_t tmp_byte = 0u;
+        if(sscanf_s(tmp_buf, "%x", &tmp_byte) < 1)
         {
             /* Failed */
             return NULL;
+        }
+        else
+        {
+            /* OK */
+            phx_result->pd_data->pb_block[tmp_k++] = (BYTE) tmp_byte;
         }
     }
     
@@ -259,7 +266,6 @@ static data_t *_s65_read_hex(FILE *f_file, int d_settings)
             if(isspace(tmp_buffer[i]))
                 tmp_buffer[i] = '\0';
         }
-        printf("\n----------\nLine:      \'%s\'\n", tmp_buffer);
 
         /* Skipping if empty */
         if(strlen(tmp_buffer) == 0u)
@@ -312,7 +318,6 @@ static data_t *_s65_read_hex(FILE *f_file, int d_settings)
         /* Failed */
         return NULL;
     }
-    printf("Block size:%zu/%zu\n", tmp_bksize, pdt_data->sz_bksize);
     
     /* Scanning again, but saving data bytes */
     /* Veryfying can be omitted now */
@@ -338,9 +343,8 @@ static data_t *_s65_read_hex(FILE *f_file, int d_settings)
             /* Failed */
             return NULL;
         }
-
+#if 0
         printf("\n----------\nLine:      \'%s\'\n", tmp_buffer);
-#if 1
         printf("Bytes:     %zu\n", tmp_record->pd_data->sz_bksize);
         printf("Address:   %zu\n", tmp_record->sz_address);
         printf("Type:      %d\n", tmp_record->d_type);

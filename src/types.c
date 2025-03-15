@@ -17,7 +17,7 @@ data_t *s65_new_block(size_t sz_bksize, BYTE b_reset)
 {
     /* Pointer to be returned */
     data_t *pdt_result = NULL;
-    printf("bytes:\t%zu\n", sz_bksize);
+
     /* Struct alloc */
     if((pdt_result = (data_t *) malloc(sizeof(data_t))) == NULL)
     {

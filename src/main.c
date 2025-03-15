@@ -17,7 +17,7 @@ int main(int argc, char **argv)
    if(! d)
       printf("(null)");
 
-   for(size_t i = 0; i < d->sz_bksize; ++i)
+   for(size_t i = 0u; i < d->sz_bksize; ++i)
       printf("%04x:\t\t%02x\n", i, d->pb_block[i]);
    printf("end");
 }
