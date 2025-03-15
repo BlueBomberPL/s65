@@ -20,9 +20,10 @@
 #define S65_READER_HEX          (1 << 2)    /* Opens file as Intel .hex         */
 #define S65_READER_PEDANTIC     (1 << 4)    /* Checks checksums and other rules */
 
-#define S65_LINE_LEN            64          /* Max length of line in file       */
+#define S65_LINE_LEN            128         /* Max length of line in file       */
 
 #include "types.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <math.h>

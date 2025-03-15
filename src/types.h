@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* 8 bits signed (for relative branching) */
 typedef int8_t      SBYTE;
@@ -40,10 +41,11 @@ typedef struct _s65_byte_block
 /* Creates new zero'ed data block. 
  *
  * @param sz_bksize     number of members
+ * @param b_reset       value to be filled with
  * 
  * @returns Valid pointer or NULL if failed.
  */
-data_t          *s65_new_block(size_t sz_bksize);
+data_t          *s65_new_block(size_t sz_bksize, BYTE b_reset);
 
 
 #endif /* _S65_H_FILE_INCLUDED_ */
