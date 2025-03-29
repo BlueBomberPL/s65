@@ -23,6 +23,7 @@
 #define S65_LINE_LEN            64          /* Max length of line in file       */
 
 #include "types.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <math.h>
@@ -33,10 +34,10 @@
 /* IHex record */
 typedef struct _s65_ihex_rec
 {
-    size_t   sz_address;                    /* Adress of the data               */
-    data_t  *pd_data;                       /* The data itself                  */
-    int      d_type;                        /* Record type                      */
-    int      b_csum;                        /* Checksum, negative if bad        */
+    size_t      sz_address;                 /* Adress of the data               */
+    data_t      *pd_data;                   /* The data itself                  */
+    int         d_type;                     /* Record type                      */
+    int         b_csum;                     /* Checksum, negative if bad        */
 
 } ihex_rec_t;
 

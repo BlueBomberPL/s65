@@ -29,19 +29,18 @@ static ihex_rec_t *_s65_parse_ihex(char *s_str)
     /* Temporary data block info */
     size_t tmp_bytes = 0u;
     
-#define _IHEX_BYTE_LEN       2
+#define _IHEX_byte_LEN       2
 #define _IHEX_ADDR_LEN       4
 #define _IHEX_TYPE_LEN       2
 #define _IHEX_CSUM_LEN       2
     
     /* Minimum length: 2 + 4 + 2 */
     /* (bytes + addr + type) */
-    if(strlen(s_str) < _IHEX_BYTE_LEN + _IHEX_ADDR_LEN + _IHEX_TYPE_LEN)
+    if(strlen(s_str) < _IHEX_byte_LEN + _IHEX_ADDR_LEN + _IHEX_TYPE_LEN)
     {
         /* 100% invalid */
         return NULL;
     }
-
     /* Alloc if needed */
     if(phx_result == NULL && (phx_result = (ihex_rec_t *) calloc(1u, sizeof(ihex_rec_t))) == NULL)
     {
@@ -57,86 +56,100 @@ static ihex_rec_t *_s65_parse_ihex(char *s_str)
     /* Skipping the colon */
     if(s_str[0] == ':')
         tmp_it = s_str + 1;
-
+    
     /* Reading data */
     
     /* Bytes (first 2 digits) */
-    tmp_c = tmp_it[_IHEX_BYTE_LEN];
-    tmp_it[_IHEX_BYTE_LEN] = '\0';
-    if(sscanf_s(tmp_it, "%x", &tmp_bytes) < 1)
+    tmp_c = tmp_it[_IHEX_byte_LEN];
+    tmp_it[_IHEX_byte_LEN] = '\0';
+    if(sscanf(tmp_it, "%x", &tmp_bytes) < 1)
     {
         /* Fail */
         return NULL;
     }
+    
     /* Now data block alloc is possible */
-    else if((phx_result->pd_data = s65_new_block(tmp_bytes)) == NULL)
+    if((phx_result->pd_data = s65_new_block(tmp_bytes, 0u)) == NULL)
     {
-        /* Fail */
+        /* Fail */  
         return NULL;
-    }
-    else
-    {
-        /* Variable assigment */
-        phx_result->pd_data->sz_bksize = tmp_bytes;
     }
 
     /* Address (next 4 digits) */
-    tmp_it[_IHEX_BYTE_LEN] = tmp_c;
-    tmp_it += _IHEX_BYTE_LEN;
+    tmp_it[_IHEX_byte_LEN] = tmp_c;
+    tmp_it += _IHEX_byte_LEN;
     tmp_c = tmp_it[_IHEX_ADDR_LEN];
     tmp_it[_IHEX_ADDR_LEN] = '\0';
-    if(sscanf_s(tmp_it, "%x", &phx_result->sz_address) < 1)
+    if(sscanf(tmp_it, "%x", &phx_result->sz_address) < 1)
     {
         /* Fail */
         return NULL;
     }
-
+    
     /* Type */
     tmp_it[_IHEX_ADDR_LEN] = tmp_c;
     tmp_it += _IHEX_ADDR_LEN;
     tmp_c = tmp_it[_IHEX_TYPE_LEN];
     tmp_it[_IHEX_TYPE_LEN] = '\0';
-    if(sscanf_s(tmp_it, "%x", &phx_result->d_type) < 1)
+    if(sscanf(tmp_it, "%x", &phx_result->d_type) < 1)
     {
         /* Fail */
         return NULL;
     }
-    /* If type == EOF, ending */
+    /* If type == EOF, skipping data */
     else if(phx_result->d_type == S65_IHEX_END)
     {
         /* OK */
-        return phx_result;
+        tmp_bytes = 0u;
+        phx_result->pd_data->sz_bksize = 0u;
     }
-
+    /* If type unknown, error */
+    else if(phx_result->d_type != S65_IHEX_DATA)
+    {
+        /* Failed */
+        return NULL;
+    }
+    
     /* Data (next n * 2 digits) */
+    /* as 1 digit == 1/2 of a byte */
     tmp_it[_IHEX_TYPE_LEN] = tmp_c;
     tmp_it += _IHEX_TYPE_LEN;
-    for(size_t i = 0, k = 0; i < (tmp_bytes * 2u - 1u); ++i)
+    /* Temp. iterator */
+    size_t tmp_k = 0u;
+    for(size_t i = 0u; i < strlen(tmp_it) - 1u && tmp_k < phx_result->pd_data->sz_bksize; i += 2)
     {
-        /* Temp hex byte buffer */
-        char tmp_buffer[3] = {0, };
-            tmp_buffer[0] = tmp_it[i];
-            tmp_buffer[1] = tmp_it[i + 1];
+        /* Temp. byte buffer */
+        char tmp_buf[3] = {0, };
+        {
+            tmp_buf[0] = tmp_it[i];
+            tmp_buf[1] = tmp_it[i + 1];
+        }
 
-        /* Converting to decimal */
-        if(sscanf_s(tmp_buffer, "%x", &((BYTE *)phx_result->pd_data->pb_block)[k++]) < 1)
+        /* Trying to convert */
+        size_t tmp_byte = 0u;
+        if(sscanf(tmp_buf, "%x", &tmp_byte) < 1)
         {
             /* Failed */
             return NULL;
         }
+        else
+        {
+            /* OK */
+            phx_result->pd_data->pb_block[tmp_k++] = (byte) tmp_byte;
+        }
     }
-
+    
     /* Checksum (last 2 digits) */
     tmp_it += (tmp_bytes * 2u);
     if((tmp_it - s_str) >= (strlen(s_str) - (s_str[0] == ':')) || 
-        sscanf_s(tmp_it, "%x", &phx_result->b_csum) < 1u)
+        sscanf(tmp_it, "%x", &phx_result->b_csum) < 1u)
     {
         /* Failed */
         phx_result->b_csum = S65_IHEX_BAD_CSUM;
     }
 
     /* Calculating valid checksum */
-    BYTE tmp_validcsum = 0u;
+    byte tmp_validcsum = 0u;
     /* Summing every byte  */
     tmp_validcsum += tmp_bytes + 
                     (phx_result->sz_address & 0xFF) +
@@ -145,7 +158,7 @@ static ihex_rec_t *_s65_parse_ihex(char *s_str)
     /* Adding data bytes */
     for(size_t i = 0u; i < phx_result->pd_data->sz_bksize; ++i)
     {
-        tmp_validcsum += ((BYTE *)(phx_result->pd_data))[i];
+        tmp_validcsum += phx_result->pd_data->pb_block[i];
     }
     /* Complementary */
     tmp_validcsum = 256 - tmp_validcsum;
@@ -159,7 +172,7 @@ static ihex_rec_t *_s65_parse_ihex(char *s_str)
     /* The end */
     return phx_result;
 
-#undef _IHEX_BYTE_LEN
+#undef _IHEX_byte_LEN
 #undef _IHEX_ADDR_LEN
 #undef _IHEX_TYPE_LEN
 #undef _IHEX_CSUM_LEN       
@@ -196,7 +209,7 @@ static data_t *_s65_read_bin(FILE *f_file, int d_settings)
         tmp_bksize += 1u;
     
     /* Creating the block */
-    if((pdt_data = s65_new_block(tmp_bksize)) == NULL)
+    if((pdt_data = s65_new_block(tmp_bksize, 0u)) == NULL)
     {
         /* Failed */
         return NULL;
@@ -207,7 +220,7 @@ static data_t *_s65_read_bin(FILE *f_file, int d_settings)
     /* Filling the block with useful data */
     const size_t tmp_result = fread(
         pdt_data->pb_block, 
-        sizeof(BYTE), 
+        sizeof(byte), 
         tmp_bksize,
         f_file);
     
@@ -246,7 +259,17 @@ static data_t *_s65_read_hex(FILE *f_file, int d_settings)
     {
         /* For each line */
         static char tmp_buffer[S65_LINE_LEN] = "";
-        fread((void *) tmp_buffer, sizeof(char), S65_LINE_LEN, f_file);
+        fgets((void *) tmp_buffer, sizeof(char) * S65_LINE_LEN, f_file);
+        /* Getting rid of the invisible chars */
+        for(ptrdiff_t i = strlen(tmp_buffer) - 1; i >= 0; --i)
+        {
+            if(isspace(tmp_buffer[i]))
+                tmp_buffer[i] = '\0';
+        }
+
+        /* Skipping if empty */
+        if(strlen(tmp_buffer) == 0u)
+            continue;
 
         /* Temp. record struct */
         const ihex_rec_t *tmp_record = _s65_parse_ihex(tmp_buffer);
@@ -255,13 +278,7 @@ static data_t *_s65_read_hex(FILE *f_file, int d_settings)
             /* Failed */
             return NULL;
         }
-#if 1
-        printf("Bytes:     %zu\n", tmp_record->pd_data->sz_bksize);
-        printf("Address:   %zu\n", tmp_record->sz_address);
-        printf("Type:      %d\n", tmp_record->d_type);
-        printf("Csum:      %d\n", tmp_record->b_csum);
-#endif
-    
+
         /* Comparing occupied location */
         /* Alias, tmp_curloc is 0 only if the address */
         /* is 0 and numer of bytes is 0 */
@@ -295,21 +312,29 @@ static data_t *_s65_read_hex(FILE *f_file, int d_settings)
     }
 
     fseek(f_file, 0l, SEEK_SET);
-    printf(":|");
     /* Now the block can be allocated */
-    if((s65_new_block(tmp_bksize)) == NULL)
+    if((pdt_data = s65_new_block(tmp_bksize, 0u)) == NULL)
     {
         /* Failed */
         return NULL;
     }
-    printf(":()");
+    
     /* Scanning again, but saving data bytes */
     /* Veryfying can be omitted now */
     while(! feof(f_file))
     {
         /* For each line */
         static char tmp_buffer[S65_LINE_LEN] = "";
-        fread((void *) tmp_buffer, sizeof(char), S65_LINE_LEN, f_file);
+        fgets((void *) tmp_buffer, sizeof(char) * S65_LINE_LEN, f_file);
+        /* Getting rid of the invisible chars */
+        for(ptrdiff_t i = strlen(tmp_buffer) - 1; i >= 0; --i)
+        {
+            if(isspace(tmp_buffer[i]))
+                tmp_buffer[i] = '\0';
+        }
+        /* Skipping if empty */
+        if(strlen(tmp_buffer) == 0u)
+            continue;
 
         /* Temp. record struct */
         const ihex_rec_t *tmp_record = _s65_parse_ihex(tmp_buffer);
@@ -318,12 +343,23 @@ static data_t *_s65_read_hex(FILE *f_file, int d_settings)
             /* Failed */
             return NULL;
         }
+#if 0
+        printf("\n----------\nLine:      \'%s\'\n", tmp_buffer);
+        printf("Bytes:     %zu\n", tmp_record->pd_data->sz_bksize);
+        printf("Address:   %zu\n", tmp_record->sz_address);
+        printf("Type:      %d\n", tmp_record->d_type);
+        printf("Csum:      %d\n", tmp_record->b_csum);
+        printf("Data:      ");
+        for(size_t i = 0u; i < tmp_record->pd_data->sz_bksize; ++i)
+            printf("%02x ", tmp_record->pd_data->pb_block[i]);
+        printf("\n");
+#endif
 
         /* Copying bytes */
         if(memcpy(
-            ((BYTE *) pdt_data->pb_block) + tmp_record->sz_address,              /* destination */
-            tmp_record->pd_data->pb_block,                                       /* source      */
-            pdt_data->sz_bksize * sizeof(BYTE)                                   /* size in B   */
+            ((byte *) pdt_data->pb_block) + tmp_record->sz_address,              /* destination               */
+            tmp_record->pd_data->pb_block,                                       /* source                    */
+            tmp_record->pd_data->sz_bksize * sizeof(byte)                        /* size in B of the source   */
         ) == NULL)
         {
             /* Failed */
