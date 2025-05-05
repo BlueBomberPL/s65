@@ -12,6 +12,7 @@
 #define S65_NORMAL_BUFSIZE      (16)        /* General purpose buffer size */
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +41,7 @@ typedef struct _s65_byte_block
 
 } data_t;
 
-/* Creates new zero'ed data block. 
+/* Creates new data block. 
  *
  * @param sz_bksize     number of members
  * @param b_reset       value to be filled with

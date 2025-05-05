@@ -6,7 +6,7 @@
 
  #include "types.h"
 
-/* Creates new zero'ed data block. 
+/* Creates new data block. 
  *
  * @param sz_bksize     number of members
  * @param b_reset       value to be filled with

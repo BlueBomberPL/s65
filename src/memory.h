@@ -18,6 +18,8 @@
 /* Address alias */
 typedef uint32_t            addr_t;
 
+/* Registers */
+#define S65_REG_NULL     ((addr_t) 0xFFFFF) /* NULL replacement if no reg. used */   
 #define S65_REG_ACC      ((addr_t) 0x10000) /* Accumulator's virtual address    */
 #define S65_REG_SREG     ((addr_t) 0x10001) /* Status register's virtual addr.  */
 #define S65_REG_X        ((addr_t) 0x10002) /* Index X's virtual addr.          */
@@ -25,10 +27,22 @@ typedef uint32_t            addr_t;
 #define S65_REG_PCL      ((addr_t) 0x10004) /* Program counter's low v.a.       */
 #define S65_REG_PCH      ((addr_t) 0x10005) /* Program counter's high v.a.      */
 #define S65_REG_SP       ((addr_t) 0x10006) /* Stack pointer's v.a.             */
-#define S65_REG_DATA     ((addr_t) 0x10007) /* Data bus' v.a.                   */
-#define S65_REG_ADL      ((addr_t) 0x10008) /* Address bus' low v.a.            */
-#define S65_REG_ADH      ((addr_t) 0x10009) /* Address bus' high v.a.           */
+#define S65_REG_DATA     ((addr_t) 0x10007) /* Data bus' (D0-D7) v.a.           */
+#define S65_REG_ADL      ((addr_t) 0x10008) /* Internal address' low v.a.       */
+#define S65_REG_ADH      ((addr_t) 0x10009) /* Internal address' high v.a.      */
+#define S65_REG_ABL      ((addr_t) 0x1000A) /* Address bus' low (A0-A7) v.a.    */
+#define S65_REG_ABH      ((addr_t) 0x1000B) /* Address bus' high (A8-A15) v.a.  */
+#define S65_MEM_SPACE    ((addr_t) 0x1000C) /* Size of full memory space        */
 
+/* Size of register memory space        */
+#define S65_MEM_REGSPACE ((addr_t) S65_MEM_SPACE - 65536)  
+
+/* Vectors */
+#define S65_VECTOR_BRK   ((word) 0xFFFE)    /* Break interrupt vector (2 words) */
+#define S65_VECTOR_NMI   ((word) 0xFFFA)    /* Non maskable int. vec. (2 words) */
+#define S65_VECTOR_RES   ((word) 0xFFFC)    /* Reset int. vec. (2 words)        */
+
+/* Bits */
 #define S65_SREG_N       (7)                /* N flag                           */
 #define S65_SREG_V       (6)                /* V flag                           */
 #define S65_SREG_B       (4)                /* B flag                           */
@@ -37,8 +51,27 @@ typedef uint32_t            addr_t;
 #define S65_SREG_Z       (1)                /* Z flag                           */
 #define S65_SREG_C       (0)                /* C flag                           */
 
-/* Checks if x is a register */
-#define S65_IS_REGISTER(x) (x > 0xFFFF && x <= S65_REG_ADH)     
+/* Other */
+#define S65_PAGE_SIZE    (256)              /* Memory page size (in bytes)      */
+
+/* Checks, if the address is a register */
+#define S65_IS_REG(addr)   ((addr) > (word)-1)
+
+/* Converts virtual address to register address */
+#define S65_ADDR_TO_REG(addr) ((addr) - (word)-1)
+
+/* Gets lower byte of a word */
+#define S65_LOW(x)         ((x) & 0xFF)
+
+/* Gets higher byte of a word */
+#define S65_HIGH(x)        (((x) >> 8) & 0xFF)  
+
+/* Packs two bytes into a word */
+#define S65_PACK(h, l)     (((h) << 8) | (l))
+
+/* Checks, if bit is set */
+#define S65_IS_SET(x, b)   (!!((x) & (1 << (b))))
+
 
 /* Converts an ASCII char to a flag.
  *
@@ -46,7 +79,7 @@ typedef uint32_t            addr_t;
  * 
  * @returns An SREG flag or invalid.
  */
-inline byte     s65_char_to_sreg(char c)
+static inline byte s65_char_to_sreg(char c)
 {
     switch(c)
     {
@@ -75,7 +108,7 @@ inline byte     s65_char_to_sreg(char c)
  * 
  * @returns A char or invalid.
  */
-inline char     s65_sreg_to_char(byte b_flag)
+static inline char s65_sreg_to_char(byte b_flag)
 {
     switch(b_flag)
     {
@@ -96,6 +129,23 @@ inline char     s65_sreg_to_char(byte b_flag)
         default:
             return (char) 0;
     }
+}
+
+/* Checks, if two addresses belong
+ * to different memory pages.
+ *
+ * @param r_a1      first address
+ * @param r_a2      second address
+ * 
+ * @returns True if boundary is crossed,
+ * false otherwise or if any of the addresses
+ * is invalid (> 65535).
+ */
+static inline bool s65_is_page_crossed(addr_t r_a1, addr_t r_a2)
+{
+    if(S65_IS_REG(r_a1) || S65_IS_REG(r_a2))
+        return 0;
+    return ((r_a1 % S65_PAGE_SIZE) != (r_a2 % S65_PAGE_SIZE));
 }
 
 /* Converts an ASCII into a register. 
