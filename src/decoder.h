@@ -35,8 +35,14 @@
 #define S65_ASM_AS_OCTAL        (1 << 2)    /* Writing values in octal system   */
 #define S65_ASM_SHORTEN         (1 << 3)    /* Using register abbreviations     */
 
-/* Checks if given mnemo is 'illegal'. */
-#define S65_IS_ILLEGAL(s)       (strchr((s), '!') != NULL)     
+/* Checks if given mnemo is 'illegal' */
+#define S65_IS_ILLEGAL(s)       (strchr((s), '!') != NULL)    
+
+/* Converts a byte from binary to BCD */
+#define S65_TO_BCD(x)           ((((x) / 10) << 4) + ((x) % 10))
+
+/* Converts a byte from BCD to binary */
+#define S65_FROM_BCD(x)         ((10 * ((x) >> 4)) + ((x) & 0xF))
 
 
 #include "memory.h"

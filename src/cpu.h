@@ -81,4 +81,10 @@ bool               s65_cpu_is_flag(byte b_flag);
  */
 void               s65_cpu_set_flag(byte b_flag);
 
+/* Clears flag in SREG.
+ *
+ * @param b_flag        the flag (S65_SREG_*)
+ */
+void               s65_cpu_clr_flag(byte b_flag);
+
 #endif /* _S65_CPU_H_FILE_ */

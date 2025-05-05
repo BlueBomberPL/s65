@@ -3,7 +3,7 @@
 #
 
 #	VARIABLES
-OUT			:= bin/a65.exe
+OUT			:= bin/a65
 FLAGS		:= -static -std=c17 -O2 -m32 -Iinclude -Wall -g
 SRC			:= $(wildcard src/*c)
 
@@ -11,4 +11,8 @@ SRC			:= $(wildcard src/*c)
 
 # 	Windows x86 compilation
 main:
-	gcc $(SRC) -o $(OUT) $(FLAGS)
+	gcc $(SRC) -o $(OUT).exe $(FLAGS)
+
+# 	Unix x86 compilation
+unix:
+	gcc $(SRC) -o $(OUT).out $(FLAGS)

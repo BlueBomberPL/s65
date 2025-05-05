@@ -9,14 +9,19 @@
 #ifndef _S65_H_FILE_INCLUDED_
 #define _S65_H_FILE_INCLUDED_
 
-#define S65_NORMAL_BUFSIZE      (16)        /* General purpose buffer size */
-
 #include <assert.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* Linux quirk */
+#ifdef __linux__
+    #include <strings.h>
+    #define strcmpi(s1, s2)         (strcasecmp(s1, s2))
+#endif /* __linux__ */
 
 /* 8 bits signed (for relative branching) */
 typedef int8_t      sbyte;

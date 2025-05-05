@@ -191,48 +191,40 @@ int s65_cpu_exe(const operation_t *op)
         /* Fetching OPCODE */
         case S65_OP_FETCH:
         {
+            /* The OPCODE value */
+            byte tmp_opcode = S65_IS_REG(ad_op_a) ? *s65_cpu_reg(ad_op_a) : (byte) ad_op_a;
+
             /* Doing nothing */
+
+            /* Conditions */
             is_cond_met = true;
             is_page_crossed = false;
             break;
         }
 
         /* Loading A with B */
+        /* Does not set flags */
+        /* Cannot cross pages */
+        /* Condition always true */
         case S65_OP_LOAD:
         {
             /* Value to load */
             byte tmp_val = 0;
 
-            /* Treating A as a register address */
-            if(ad_op_a == S65_REG_NULL || ! S65_IS_REG(ad_op_a))
-            {
-                /* Wrong register */
-                assert("This should not have happened.");
-            }
+            /* Interpreting B */
+            tmp_val = S65_IS_REG(ad_op_b) ? *s65_cpu_reg(ad_op_b) : ad_op_b;
 
-            /* Treating B as a const or another register address */
-            if(op->d_flags & S65_OPFLAG_CONST)
-            {
-                /* Const */
-                tmp_val = (byte) ad_op_b;
-            }
-
-            else if(S65_IS_REG(ad_op_b))
-            {
-                /* Register */
-                tmp_val = *s65_cpu_reg(ad_op_b);
-            }
-
-            /* Operation */
+            /* Operation (A is a register) */
             *s65_cpu_reg(ad_op_a) = tmp_val;
 
+            /* Conditions */
             is_cond_met = true;
             is_page_crossed = false;
             break;
         }
 
         /* PC (2-byte) incrementation */
-        /* Does not set C */
+        /* Does not set flags */
         /* Can cross pages */
         /* Condition always true */
         case S65_OP_PC_INC:
@@ -248,13 +240,14 @@ int s65_cpu_exe(const operation_t *op)
             *s65_cpu_reg(S65_REG_PCH) = S65_HIGH(tmp_pc);
             *s65_cpu_reg(S65_REG_PCL) = S65_LOW(tmp_pc);
 
+            /* Conditions */
             is_cond_met = true;
             is_page_crossed = s65_is_page_crossed(tmp_pc, tmp_old_pc);
             break;
         }
 
         /* PC (2-byte) U2 addition without C */
-        /* Does not set C */
+        /* Does not set flags */
         /* Can cross pages */
         /* Condition always true */
         case S65_OP_PC_AD2:
@@ -264,29 +257,10 @@ int s65_cpu_exe(const operation_t *op)
             /* Old PC value */
             const word tmp_old_pc = tmp_pc;
 
-            /* Value to add (-128; 127) */
-            int tmp_val = 0;
+            /* Value to add (-128; 127) == A */
+            int tmp_val = S65_IS_REG(ad_op_a) ? (int) *s65_cpu_reg(ad_op_a) : (int) ad_op_a;
 
-            /* If A is a constant */
-            if(op->d_flags & S65_OPFLAG_CONST)
-            {
-                tmp_val = ad_op_a;
-            }
-
-            /* If A is a register */
-            else if(S65_IS_REG(ad_op_a))
-            {
-                tmp_val = *s65_cpu_reg(ad_op_a);
-            }
-
-            /* Error */
-            else
-            {
-                /* Wrong register */
-                assert("This should not have happened.");
-            }
-
-            /* Translating the value U2 -> +- decimal */
+            /* Translating the value U2 -> +-decimal */
             tmp_val = (tmp_val >= 128) ? (tmp_val - 256) : tmp_val;
 
             /* Operation */
@@ -296,13 +270,14 @@ int s65_cpu_exe(const operation_t *op)
             *s65_cpu_reg(S65_REG_PCH) = S65_HIGH(tmp_pc);
             *s65_cpu_reg(S65_REG_PCL) = S65_LOW(tmp_pc);
 
+            /* Conditions */
             is_cond_met = true;
             is_page_crossed = s65_is_page_crossed(tmp_pc, tmp_old_pc);
             break;
         }
 
         /* PC (2-byte) U2 addition with C */
-        /* Does not set C */
+        /* Does not set flags */
         /* Can cross pages */
         /* Condition always true */
         case S65_OP_PC_AD2C:
@@ -312,27 +287,8 @@ int s65_cpu_exe(const operation_t *op)
             /* Old PC value */
             const word tmp_old_pc = tmp_pc;
 
-            /* Value to add (-128; 127) */
-            int tmp_val = 0;
-
-            /* If A is a constant */
-            if(op->d_flags & S65_OPFLAG_CONST)
-            {
-                tmp_val = ad_op_a;
-            }
-
-            /* If A is a register */
-            else if(S65_IS_REG(ad_op_a))
-            {
-                tmp_val = *s65_cpu_reg(ad_op_a);
-            }
-
-            /* Error */
-            else
-            {
-                /* Wrong register */
-                assert("This should not have happened.");
-            }
+            /* Value to add (-128; 127) == A */
+            int tmp_val = S65_IS_REG(ad_op_a) ? (int) *s65_cpu_reg(ad_op_a) : (int) ad_op_a;
 
             /* Translating the value U2 -> +- decimal */
             tmp_val = (tmp_val >= 128) ? (tmp_val - 256) : tmp_val;
@@ -344,6 +300,7 @@ int s65_cpu_exe(const operation_t *op)
             *s65_cpu_reg(S65_REG_PCH) = S65_HIGH(tmp_pc);
             *s65_cpu_reg(S65_REG_PCL) = S65_LOW(tmp_pc);
 
+            /* Conditions */
             is_cond_met = true;
             is_page_crossed = s65_is_page_crossed(tmp_pc, tmp_old_pc);
             break;
@@ -355,36 +312,66 @@ int s65_cpu_exe(const operation_t *op)
         /* Condition always true */
         case S65_OP_ADC:
         {
-            /* Value to be added (B) */
-            byte tmp_val = 0;
-
             /* Old A value */
             const byte tmp_old_a = *s65_cpu_reg(ad_op_a);
 
-            /* If B is a constant */
-            if(op->d_flags & S65_OPFLAG_CONST)
-            {
-                tmp_val = ad_op_b;
-            }
+            /* Value to be added (B) */
+            byte tmp_val = S65_IS_REG(ad_op_b) ? *s65_cpu_reg(ad_op_b) : (byte) ad_op_b;
 
-            /* If B is a register */
-            else if(S65_IS_REG(ad_op_a))
-            {
-                tmp_val = *s65_cpu_reg(ad_op_b);
-            }
+            /* Temporary 2-byte addition value */
+            word tmp_result = 0;
 
-            /* Error */
-            else
+            /* Converting from BCD if D set */
+            if(s65_cpu_is_flag(S65_SREG_D))
             {
-                /* Wrong register */
-                assert("This should not have happened.");
+                tmp_val                 = S65_FROM_BCD(tmp_val);
+                *s65_cpu_reg(ad_op_a)   = S65_FROM_BCD(*s65_cpu_reg(ad_op_a));
             }
 
             /* Operation */
-            *s65_cpu_reg(ad_op_a) += tmp_val + !!s65_cpu_is_flag(S65_SREG_C);
+            tmp_result = (word) *s65_cpu_reg(ad_op_a) + (word) tmp_val + (word) !!s65_cpu_is_flag(S65_SREG_C);
+            //*s65_cpu_reg(ad_op_a) += tmp_val + !!s65_cpu_is_flag(S65_SREG_C);
 
-            /* Setting flags */
-            if()
+            /* Managing flags */
+
+            /* Carry flag */
+            if(tmp_result > (byte) -1)
+                s65_cpu_set_flag(S65_SREG_C);
+            else
+                s65_cpu_clr_flag(S65_SREG_C);
+
+            /* Zero flag */
+            if(tmp_result == 0u)
+                s65_cpu_set_flag(S65_SREG_Z);
+            else
+                s65_cpu_cls_flag(S65_SREG_Z);
+
+            /* Negative flag */
+            if(tmp_result & (1 << 7))
+                s65_cpu_cls_flag(S65_SREG_Z);
+
+            
+
+            else if((int) tmp_old_a + (int) tmp_val != (int) tmp_result)
+            {
+                /* Overflow flag */
+                s65_cpu_set_flag(S65_SREG_N);
+            }
+
+            /* Converting back to BCD if D set */
+            if(s65_cpu_is_flag(S65_SREG_D))
+            {
+                tmp_val                 = S65_TO_BCD(tmp_val);
+                *s65_cpu_reg(ad_op_a)   = S65_TO_BCD(*s65_cpu_reg(ad_op_a));
+            }
+
+            break;
+        }
+
+        /* ??? */
+        default:
+        {
+            assert("");
         }
     }
 
@@ -428,4 +415,14 @@ void s65_cpu_set_flag(byte b_flag)
 {
     assert(g_registers);
     *s65_cpu_reg(S65_REG_SREG) |= (1 << b_flag);
+}
+
+/* Clears flag in SREG.
+ *
+ * @param b_flag        the flag (S65_SREG_*)
+ */
+void s65_cpu_clr_flag(byte b_flag)
+{
+    assert(g_registers);
+    *s65_cpu_reg(S65_REG_SREG) &= ~(1 << b_flag);
 }
