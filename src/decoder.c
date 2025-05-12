@@ -537,8 +537,12 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_WRITE                       );
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE                       );
-        /* Sending (pushing) SREG */
+        /* Setting B bit flag */
+        s65_op_add(rop_result, S65_OP_SET,          S65_REG_SREG,   S65_SREG_B,                     d_cycle, S65_OPFLAG_WRITE                       ); 
+        /* Sending (pushing) SREG with B set */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   S65_REG_SREG,                   d_cycle, S65_OPFLAG_WRITE                       );
+        /* Clearing B bit flag */
+        s65_op_add(rop_result, S65_OP_CLEAR,        S65_REG_SREG,   S65_SREG_B,                     d_cycle, S65_OPFLAG_WRITE                       ); 
 
         /* [T5] */ d_cycle++;
 
@@ -550,13 +554,13 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* [T6] */ d_cycle++;
         
-        /* Setting address bus to BRK vector + 1 content */
+        /* Setting address bus to (BRK vector + 1) content */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_LOW(S65_VECTOR_BRK + 1u),   d_cycle, S65_OPFLAG_READ                        );
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_HIGH(S65_VECTOR_BRK + 1u),  d_cycle, S65_OPFLAG_READ                        );
         /* Reading new address high */
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );                     
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );   
         /* Setting I bit flag */
-        s65_op_add(rop_result, S65_OP_SET,          S65_REG_SREG,   S65_SREG_I,                     d_cycle, S65_OPFLAG_READ                        );  
+        s65_op_add(rop_result, S65_OP_SET,          S65_REG_SREG,   S65_SREG_I,                     d_cycle, S65_OPFLAG_READ                        );                    
 
         /* [T0] */
 

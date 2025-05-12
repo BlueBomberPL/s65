@@ -141,5 +141,11 @@ void print(void)
 
       for(int i = 0; i < 16; ++i)
          printf("%02x ", memo->pb_block[i]);
+
+      printf(" ... ");
+      
+      for(int i = 0; i < 16; ++i)
+         printf("%02x ", memo->pb_block[S65_PACK(1, i)]);
+
       printf("\n");
 }

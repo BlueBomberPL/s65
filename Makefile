@@ -4,15 +4,15 @@
 
 #	VARIABLES
 OUT			:= bin/a65
-FLAGS		:= -static -std=c17 -O2 -m32 -Iinclude -Wall -g
+FLAGS		:= -static -std=c17 -O2 -Iinclude -Wall -g
 SRC			:= $(wildcard src/*c)
 
 #	BRANCHES
 
-# 	Windows x86 compilation
+# 	Windows compilation
 main:
 	gcc $(SRC) -o $(OUT).exe $(FLAGS)
 
-# 	Unix x86 compilation
+# 	Unix compilation
 unix:
 	gcc $(SRC) -o $(OUT).out $(FLAGS)
