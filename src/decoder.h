@@ -25,10 +25,10 @@
 #define S65_OPFLAG_DISCARD      (1 << 0)    /* The result is discarded          */
 #define S65_OPFLAG_READ         (1 << 1)    /* CPU reads data while executing   */
 #define S65_OPFLAG_WRITE        (1 << 2)    /* CPU writes data while executing  */
-#define S65_OPFLAG_CONST        (1 << 3)    /* Last non-null arg. is imm. value */
 #define S65_OPFLAG_IF_CROSSED   (1 << 4)    /* Executes if page boundary crossed*/
 #define S65_OPFLAG_IF_NOT_CROSSED (1 << 5)  /* ... if page boundary not crossed */
 #define S65_OPFLAG_IF_COND      (1 << 6)    /* ... if condition (branches)      */
+#define S65_OPFLAG_IF_NOT_COND  (1 << 7)    /* ... if condition not met (brnch.)*/
 
 #define S65_ASM_LOWERCASE       (1 << 0)    /* Using lowercase for values       */
 #define S65_ASM_AS_HEXADECIMAL  (1 << 1)    /* Writing values in hex system     */
@@ -97,14 +97,14 @@ typedef enum _s65_optype
     S65_OP_FETCH        = 0x00,         /* Fetch A                     */
     S65_OP_LOAD,                        /* A  <-- B                    */
     S65_OP_PC_INC,                      /* PC <-- PC + 1               */
-    S65_OP_PC_AD2,                      /* PC <-- PC + A (U2)          */ 
-    S65_OP_PC_AD2C,                     /* PC <-- PC + A (U2) + C      */  
-    S65_OP_ADC,                         /* A  <-- A + B + C            */
+    S65_OP_AD2,                         /* A <-- A + B (U2)            */ 
+    S65_OP_AD2C,                        /* A <-- A + B (U2) + C'       */  
+    S65_OP_ADC,                         /* A  <-- A + B + C'           */
+    S65_OP_ADCC,                        /* ADC, but used for ADC instr.*/
     S65_OP_ADD,                         /* A  <-- A + B                */    
     S65_OP_BIT,                         /* A & B                       */
     S65_OP_BIT_SREG,                    /* SREG & A no flags set       */
     S65_OP_BIT_SREG_NOT,                /* ~(SREG & A) no flags set    */
-    S65_OP_BRANCH,                      /* PC <-- PC + A if condition  */
     S65_OP_CMP,                         /* A - B                       */
     S65_OP_INC,                         /* A  <-- A + 1                */
     S65_OP_DEC,                         /* A  <-- A - 1                */
@@ -112,9 +112,9 @@ typedef enum _s65_optype
     S65_OP_LSR,                         /* A  <-- A >> 1               */
     S65_OP_ROL,                         /* A  <-- A <r< 1              */
     S65_OP_ROR,                         /* A  <-- A >r> 1              */
-    S65_OP_SET,                         /* A  <-- A | B                */
+    S65_OP_SET,                         /* A  <-- A | (1 << B)         */
+    S65_OP_CLEAR,                       /* A  <-- A & ~(1 << B)        */
     S65_OP_SBC,                         /* A  <-- A - B - ~C           */
-    S65_OP_CLEAR,                       /* A  <-- A & ~B               */
     S65_OP_AND,                         /* A  <-- A && B               */
     S65_OP_OR,                          /* A  <-- A || B               */
     S65_OP_EOR,                         /* A  <-- A ^ B                */

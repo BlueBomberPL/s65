@@ -21,6 +21,10 @@
 #define S65_CPUPIN_SYNC         (1 << 1)    /* SYNC pin (OUT)                   */
 #define S65_CPUPIN_RW           (1 << 2)    /* Read/Write pin (OUT)             */
 
+/* Constants */
+#define S65_CPURET_EXECUTED     0x00        /* Operation has been executed      */
+#define S65_CPURET_SKIPPED      0x01        /* Operation has been skipped       */
+
 /* Pin state manipulators */
 #define S65_PIN_SET(reg, p)     ((reg) |= (1 << (p)))
 #define S65_PIN_CLR(reg, p)     ((reg) &= ~(1 << (p)))
@@ -47,14 +51,14 @@ int                s65_cpu_init(void);
  *
  * @returns Number of cycles executed.
  */
-int                s65_cpu_reset(void);
+size_t             s65_cpu_reset(void);
 
 /* Executes an operation.
  *
  * @param op            the operation
  * 
- * @returns Operation ID if succeeded,
- * zero value otherwise.
+ * @returns Meaningful value indicating
+ * the operation execution (S65_CPURET_*). 
  */
 int                s65_cpu_exe(const operation_t *op);
 

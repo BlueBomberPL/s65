@@ -145,7 +145,7 @@ static inline bool s65_is_page_crossed(addr_t r_a1, addr_t r_a2)
 {
     if(S65_IS_REG(r_a1) || S65_IS_REG(r_a2))
         return 0;
-    return ((r_a1 % S65_PAGE_SIZE) != (r_a2 % S65_PAGE_SIZE));
+    return ((r_a1 / S65_PAGE_SIZE) != (r_a2 / S65_PAGE_SIZE));
 }
 
 /* Converts an ASCII into a register. 

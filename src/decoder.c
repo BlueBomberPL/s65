@@ -411,7 +411,7 @@ const instruction_t *s65_decode(const data_t *dt_memory, instruction_set_t st_se
             break;
         }
     }
-    /* Finding the OPCODE (as 65C00) */
+    /* Finding the OPCODE (as 65C00 if set) */
     for(size_t i = 0; st_set >= S65_SET_65C00 && i < sizeof(gc_instructions) / sizeof(gc_instructions[0]); ++i)
     {
         if(gc_instructions[i].b_opcode == tmp_opcode &&
@@ -421,7 +421,7 @@ const instruction_t *s65_decode(const data_t *dt_memory, instruction_set_t st_se
             break;
         }
     }
-    /* Finding the OPCODE (as WDC65C00) */
+    /* Finding the OPCODE (as WDC65C00 if set) */
     for(size_t i = 0; st_set == S65_SET_WDC65C00 && i < sizeof(gc_instructions) / sizeof(gc_instructions[0]); ++i)
     {
         if(gc_instructions[i].b_opcode == tmp_opcode &&
@@ -516,7 +516,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_PC_INC,       S65_REG_NULL,   S65_REG_NULL,                   d_cycle, S65_OPFLAG_WRITE                       );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_WRITE                       );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE                       );
         /* Sending (pushing) PCH */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   S65_REG_PCH,                    d_cycle, S65_OPFLAG_WRITE                       );
 
@@ -526,7 +526,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_DEC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_WRITE                       );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_WRITE                       );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE                       );
         /* Sending (pushing) PCL */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   S65_REG_PCL,                    d_cycle, S65_OPFLAG_WRITE                       );
 
@@ -536,7 +536,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_DEC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_WRITE                       );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_WRITE                       );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE                       );
         /* Sending (pushing) SREG */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   S65_REG_SREG,                   d_cycle, S65_OPFLAG_WRITE                       );
 
@@ -556,7 +556,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         /* Reading new address high */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );                     
         /* Setting I bit flag */
-        s65_op_add(rop_result, S65_OP_SET,          S65_REG_SREG,   S65_SREG_I,                     d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );  
+        s65_op_add(rop_result, S65_OP_SET,          S65_REG_SREG,   S65_SREG_I,                     d_cycle, S65_OPFLAG_READ                        );  
 
         /* [T0] */
 
@@ -582,7 +582,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* Setting address to SP and discarding */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
 
         /* [T3] */ d_cycle++;
 
@@ -590,7 +590,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_INC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
         /* Reading (pulling) SREG */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_SREG,   S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -600,7 +600,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_INC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
         /* Reading (pulling) PCL */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_PCL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -610,7 +610,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_INC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
         /* Reading (pulling) PCH */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_PCH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -632,7 +632,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* Setting address to SP and discarding */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
 
         /* [T3] */ d_cycle++;
 
@@ -640,7 +640,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_INC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
         /* Reading (pulling) PCL */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_PCL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -650,7 +650,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_INC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
         /* Reading (pulling) PCH */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_PCH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -664,6 +664,8 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* Incrementing PC */
         s65_op_add(rop_result, S65_OP_PC_INC,       S65_REG_NULL,   S65_REG_NULL,                   0,       S65_OPFLAG_READ                        );
+
+        /* Next instruction */
     }
 
     /* JSR - jump to subroutine */
@@ -683,7 +685,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* Setting address to SP and discarding */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
 
         /* [T3] */ d_cycle++;
 
@@ -696,7 +698,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_DEC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_WRITE                       );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_WRITE                       );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE                       );
         /* Sending (pushing) PCL */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   S65_REG_PCL,                    d_cycle, S65_OPFLAG_WRITE                       );
 
@@ -707,8 +709,10 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         /* Setting address bus to PC */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_PCL,                    d_cycle, S65_OPFLAG_READ                        );
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_PCH,                    d_cycle, S65_OPFLAG_READ                        );
-        /* Reading address low */
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
+        /* Reading address high */
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
+        /* Decrementing SP */
+        s65_op_add(rop_result, S65_OP_DEC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
 
         /* [T0] */
 
@@ -717,6 +721,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_PCH,    S65_REG_ADH,                    0,       S65_OPFLAG_READ                        ); 
 
         /* Next instruction will be executed from the new address */
+
     }
 
     /* JMP - jump to location */
@@ -813,7 +818,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             strcmpi(instr->s_mnemo, "PHY") == 0
         )
     {
-        /* Obtaining the register */
+        /* Obtaining the register (last letter) */
         const addr_t tmp_reg = s65_asci_to_reg(instr->s_mnemo + 2);
 
         /* [T1] */
@@ -828,7 +833,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_WRITE                       );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_WRITE                       );
         /* Sending (pushing) appropiate register */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   tmp_reg,                        d_cycle, S65_OPFLAG_WRITE                       );
 
@@ -836,6 +841,8 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* Incrementing PC */
         s65_op_add(rop_result, S65_OP_PC_INC,       S65_REG_NULL,   S65_REG_NULL,                   0,       S65_OPFLAG_READ                        );
+        /* Decrementing SP */
+        s65_op_add(rop_result, S65_OP_DEC,          S65_REG_SP,     S65_REG_NULL,                   0,       S65_OPFLAG_READ                        );
         
         /* New instruction starts here */
     }
@@ -862,7 +869,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
         /* Setting address bus to SP and discarding */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
 
         /* [T3] */ d_cycle++;
 
@@ -870,7 +877,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         s65_op_add(rop_result, S65_OP_INC,          S65_REG_SP,     S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
         /* Setting address bus to SP */
         s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_SP,                     d_cycle, S65_OPFLAG_READ                        );
-        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+        s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
         /* Reading (pulling) appropiate register */
         s65_op_add(rop_result, S65_OP_LOAD,         tmp_reg,        S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -892,20 +899,16 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         /* Obtaining source value */
         /* The value */
         addr_t ad_src;
-        /* If the value is a const or an address */
-        bool is_src_const;
         {
             /* Z - zero constant */
             if(instr->s_mnemo[2] == 'Z')
             {
                 ad_src = 0x00;
-                is_src_const = S65_OPFLAG_CONST;
             }
             /* A, X, Y - source registers */
             else
             {
                 ad_src = s65_asci_to_reg(instr->s_mnemo + 2);
-                is_src_const = 0;
             }
         }
 
@@ -926,9 +929,9 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to effective address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE                       );
             /* Writing the value to memory */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE | is_src_const        );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE                       );
         }
 
         /* Absolute addressing (3.2) */
@@ -960,7 +963,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_WRITE                       );
             /* Writing the value to memory */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE | is_src_const        );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE                       );
 
         }
     
@@ -981,7 +984,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to base address low and discarding */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
 
             /* [T3] */ d_cycle++;
             
@@ -993,7 +996,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* [T4] */ d_cycle++;
 
             /* Adding 1 without C to address bus low */
-            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading effective addres high */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -1003,7 +1006,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_WRITE                       );
             /* Writing the value to memory */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE | is_src_const        );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE                       );
 
         }
     
@@ -1039,7 +1042,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* Adding index register without C to base address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    ad_idx,                         d_cycle, S65_OPFLAG_READ                        );
             /* Adding C to base address high */
-            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             /* Setting address bus to calculated address and discarding */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_READ                        );
@@ -1047,7 +1050,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* [T4] */ d_cycle++;
 
             /* Writing the value to memory */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE | is_src_const        );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE                       );
 
         }
 
@@ -1072,7 +1075,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to base address low and discarding */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             
             /* [T3] */ d_cycle++;
 
@@ -1080,9 +1083,9 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    ad_idx,                         d_cycle, S65_OPFLAG_WRITE                       );
             /* Setting address bus to calculated address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE                       );
             /* Writing the value to memory */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE | is_src_const        );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE                       );
 
         }
 
@@ -1103,14 +1106,14 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to indirect address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading base address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
             /* [T3] */ d_cycle++;
             
             /* Adding 1 without C to address bus low */
-            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading base addres high */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -1125,7 +1128,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* [T5] */ d_cycle++;
 
             /* Writing the value to memory */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE | is_src_const        );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   ad_src,                         d_cycle, S65_OPFLAG_WRITE                       );
 
         }
 
@@ -1149,8 +1152,9 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         optype_t opt_cond = S65_OP_UNKNOWN;
         byte     b_flag = (byte) -1;
 
-        /* The condition (negative, zero, positive etc.) */
-        /* is selected based on the mnemonic. */
+        /* The condition (negative, zero, positive etc.) 
+         * is selected based on the mnemonic. 
+         */
 
         /* C == 0  */
         if(strcmpi(instr->s_mnemo, "BCC") == 0)
@@ -1237,14 +1241,22 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         /* [T2] */ d_cycle++;
         /* Bypassed if condition not met */
         
+        /* Incrementing PC */
+        s65_op_add(rop_result, S65_OP_PC_INC,      S65_REG_NULL,   S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND   );
         /* Adding U2 number (the offset) without C to PC */
-        s65_op_add(rop_result, S65_OP_PC_AD2,      S65_REG_DATA,    S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND   );                  
+        s65_op_add(rop_result, S65_OP_AD2,         S65_REG_PCL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND   );                  
 
         /* [T3] */ d_cycle++;
         /* Bypassed if page not crossed */
 
-        /* Adding C to PC */
-        s65_op_add(rop_result, S65_OP_PC_AD2C,     0x00,            S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST | S65_OPFLAG_IF_COND | S65_OPFLAG_IF_CROSSED);
+        /* Adding C to PC if crossed the page */
+        s65_op_add(rop_result, S65_OP_AD2C,        S65_REG_PCH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND | S65_OPFLAG_IF_CROSSED);
+
+        /* [T0] */
+        /* Bypassed if condition met */
+
+        /* Incrementing PC */
+        s65_op_add(rop_result, S65_OP_PC_INC,      S65_REG_NULL,   S65_REG_NULL,                   0,       S65_OPFLAG_READ | S65_OPFLAG_IF_NOT_COND);
 
         /* Next instruction */
     }
@@ -1280,13 +1292,13 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to effective address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ |  S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             
             /* [T3] */ d_cycle++;
 
             /* Doing the same but as WRITE */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE                       );
             /* Now DATA contains pre-modified value */
 
             /* [T4] */ d_cycle++;
@@ -1328,13 +1340,15 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Doing the same but as WRITE */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_WRITE                       );
             /* Now DATA contains pre-modified value */
 
             /* [T5] */ d_cycle++;
 
             /* Modyfying the data */
-            s65_op_add(rop_result, tmp_op->ot_type,     S65_REG_DATA,   tmp_op->ad_secnd,               d_cycle, S65_OPFLAG_WRITE | tmp_op->d_flags    ); 
+            s65_op_add(rop_result, tmp_op->ot_type,     S65_REG_DATA,   tmp_op->ad_secnd,               d_cycle, S65_OPFLAG_READ | tmp_op->d_flags     ); 
+            /* Fake load to update the DATA */
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_DATA,   S65_REG_DATA,                   d_cycle, S65_OPFLAG_WRITE                       ); 
         }
 
         /* Zero page, X addressing (4.3) */
@@ -1354,7 +1368,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to base address low and discarding */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             
             /* [T3] */ d_cycle++;
 
@@ -1362,13 +1376,13 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    S65_REG_X,                      d_cycle, S65_OPFLAG_READ                        );
             /* Setting address bus to calculated address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ |  S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             
             /* [T4] */ d_cycle++;
 
             /* Doing the same but as WRITE */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_WRITE                       );
             /* Now DATA contains pre-modified value */
 
             /* [T5] */ d_cycle++;
@@ -1406,7 +1420,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* Adding index register without C to base address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    S65_REG_X,                      d_cycle, S65_OPFLAG_READ                        );
             /* Adding C to base address high */
-            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             /* Setting address bus to calculated address and discarding */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_READ                        );
@@ -1478,7 +1492,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to effective address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             /* Now DATA contains valid operand */
         }
 
@@ -1530,7 +1544,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to base address low and discarding */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
 
             /* [T3] */ d_cycle++;
             
@@ -1542,15 +1556,15 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* [T4] */ d_cycle++;
 
             /* Adding 1 without C to address bus low */
-            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading effective addres high */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
             /* [T5] */ d_cycle++;
 
             /* Setting address bus to effective address */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_WRITE                       );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_READ                        );
             /* Now DATA contains valid operand */
         }
     
@@ -1583,10 +1597,10 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* [T3] */ d_cycle++;
 
-            /* Adding index register without C to base address low */
+            /* Adding index register without C' to base address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    ad_idx,                         d_cycle, S65_OPFLAG_READ                        );
-            /* Adding C to base address high */
-            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            /* Adding C' to base address high */
+            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             /* Setting address bus to calculated address */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_READ                        );
@@ -1600,7 +1614,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* Reading base address high again */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Adding 1 to base address high */
-            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST | S65_OPFLAG_IF_CROSSED);
+            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
 
             /* Now DATA contains valid operand */
         }
@@ -1626,7 +1640,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to base address low and discarding */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             
             /* [T3] */ d_cycle++;
 
@@ -1634,7 +1648,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    ad_idx,                         d_cycle, S65_OPFLAG_READ                        );
             /* Setting address bus to calculated address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ |  S65_OPFLAG_CONST    );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             /* Now DATA contains valid operand */
         }
 
@@ -1655,14 +1669,14 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* Setting address bus to indirect address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading base address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        ); 
 
             /* [T3] */ d_cycle++;
             
             /* Adding 1 without C to address bus low */
-            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading base addres high */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -1671,7 +1685,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* Adding Y without C to address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    S65_REG_Y,                      d_cycle, S65_OPFLAG_READ                        );
             /* Adding C to address high */
-            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST     );
+            s65_op_add(rop_result, S65_OP_ADC,          S65_REG_ADH,    0x00,                           d_cycle, S65_OPFLAG_READ                        );
 
             /* Setting address bus to calculated address */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
@@ -1687,11 +1701,11 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Setting address bus to indirect address low again */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST | S65_OPFLAG_IF_CROSSED);
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Reading base address low again */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Adding 1 without C to address bus low again */
-            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST | S65_OPFLAG_IF_CROSSED);
+            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Reading base address high again */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Setting address bus to address and discarding */
@@ -1700,7 +1714,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             /* Adding Y without C to address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    S65_REG_Y,                      d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Adding 1 to address high */
-            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_CONST | S65_OPFLAG_IF_CROSSED);
+            s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADH,    0x01,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             /* Setting address bus to calculated address */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_CROSSED);
@@ -1801,12 +1815,11 @@ operation_t *s65_unique_op(const instruction_t *in_instr)
             strcmpi(in_instr->s_mnemo, "CLV") == 0)
     {
         /* Obtaining the bit */
-        const byte tmp_bit = (1 << s65_char_to_sreg(in_instr->s_mnemo[2]));
+        const byte tmp_bit = s65_char_to_sreg(in_instr->s_mnemo[2]);
 
         tmp_op->ot_type         = S65_OP_CLEAR;
         tmp_op->ad_first        = S65_REG_SREG;
         tmp_op->ad_secnd        = tmp_bit; 
-        tmp_op->d_flags         = S65_OPFLAG_CONST;
     }
 
     /* DEX, DEY, DEA - decrement register */
@@ -1873,12 +1886,11 @@ operation_t *s65_unique_op(const instruction_t *in_instr)
             strcmpi(in_instr->s_mnemo, "SEI") == 0)
     {
         /* Obtaining the bit */
-        const byte tmp_bit = (1 << s65_char_to_sreg(in_instr->s_mnemo[2]));
+        const byte tmp_bit = s65_char_to_sreg(in_instr->s_mnemo[2]);
 
         tmp_op->ot_type         = S65_OP_SET;
         tmp_op->ad_first        = S65_REG_SREG;
         tmp_op->ad_secnd        = tmp_bit; 
-        tmp_op->d_flags         = S65_OPFLAG_CONST;
     }
 
     /* TAX, TAY, TSX, TXA, TXS, TYA - transfer */
@@ -1892,16 +1904,16 @@ operation_t *s65_unique_op(const instruction_t *in_instr)
         /* First register (destination) */
         addr_t tmp_dest;
         {
-            /* 2nd char + NULL terminator */
-            const char buf[2] = { in_instr->s_mnemo[1], '\0' };
+            /* 3rd char + NULL terminator */
+            const char buf[2] = { in_instr->s_mnemo[2], '\0' };
             tmp_dest = s65_asci_to_reg(buf);
         }
 
         /* Second register (source) */
         addr_t tmp_src;
         {
-            /* 3rd char + NULL terminator */
-            const char buf[2] = { in_instr->s_mnemo[2], '\0' };
+            /* 2nd char + NULL terminator */
+            const char buf[2] = { in_instr->s_mnemo[1], '\0' };
             tmp_src = s65_asci_to_reg(buf);
         }
 
@@ -1910,16 +1922,17 @@ operation_t *s65_unique_op(const instruction_t *in_instr)
         tmp_op->ad_secnd        = tmp_src;
     }
 
-    /* Internal execution on memory data */
-    /* 2nd operand should be neglected here */
-    /* as it depends on addressing mode */
-    /* (unknown here) */
+    /* Internal execution on memory data -
+     * 2nd operand should be neglected here 
+     * as it depends on the addressing mode 
+     * (unknown here) 
+     */
 
     /* ADC - adding to A with carry */
     else if(strcmpi(in_instr->s_mnemo, "ADC") == 0)
     {
         tmp_op->ad_first = S65_REG_ACC;
-        tmp_op->ot_type = S65_OP_ADC;
+        tmp_op->ot_type = S65_OP_ADCC;
     }
 
     /* AND - and with A */
@@ -2028,8 +2041,9 @@ size_t s65_instr_cycles(const op_result_t *rop_list)
 {
     assert(rop_list);
 
-    /* Number of the cycles is equal: 1 + number of times */
-    /* the 'd_cycle' member has increased. */
+    /* Number of the cycles is equal: 1 + number of times 
+     * the 'd_cycle' member has increased. 
+     */
     if(rop_list->sz_count == 0u)
         return 0u;
     if(rop_list->sz_count == 1u)

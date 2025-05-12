@@ -25,10 +25,10 @@ addr_t s65_asci_to_reg(const char *s_str)
         return S65_REG_SREG;
     /* Index X */
     if(strcmp(s_str, "X") == 0 || strcmp(s_str, "IX") == 0)
-        return S65_REG_ACC;
+        return S65_REG_X;
     /* Index Y */
     if(strcmp(s_str, "Y") == 0 || strcmp(s_str, "IY") == 0)
-        return S65_REG_ACC;
+        return S65_REG_Y;
     /* Program counter low */
     if(strcmp(s_str, "PCL") == 0)
         return S65_REG_PCL;
@@ -37,7 +37,7 @@ addr_t s65_asci_to_reg(const char *s_str)
         return S65_REG_PCH;
     /* Stack pointer */
     if(strcmp(s_str, "S") == 0 || strcmp(s_str, "SP") == 0)
-        return S65_REG_PCH;
+        return S65_REG_SP;
     /* Data buffer */
     if(strcmp(s_str, "DATA") == 0)
         return S65_REG_DATA;
