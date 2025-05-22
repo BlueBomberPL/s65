@@ -2,20 +2,16 @@
  *  main.c
  *
  *  Entrance point for the program.
- *  Launches modules.
+ *  Launches the modules.
  * 
  */
 
  /* TODO
   *
-  *   DOKOŃCZYĆ PODPUNKT 4 z APPENDIX A (TESTOWANIE)
-  *   DODAC OBSŁUGĘ DLA INSTRUKCJI 65C00
-  * 
-  *   DECODE()/CONVERT() POWINNY DZIAŁAĆ NA REJESTRACH, NIE NA BLOKACH PAMIĘCI
-  * 
-  *   POPRAWIĆ BRA - W CONVERT()
-  * 
   *   POSZUKAĆ BUGÓW
+  *   NAPISAĆ SAM SYMULATOR
+  *   PRZETESTOWAĆ NMI, IRQ, RES
+  *   PRZETESTOWAĆ JSR, RTI, RTS
   */
 
 #include "decoder.h"
@@ -32,13 +28,7 @@ void exec(byte **block, const op_result_t *opr);
 
 int main(int argc, char **argv)
 {
-   //printf("%d", s65_is_page_crossed(200, 199));
-
-
-   //return 0;
-
    s65_cpu_init();
-   s65_cpu_reset();
 
    s65_cpu_clr_flag(S65_SREG_N);
    s65_cpu_clr_flag(S65_SREG_V);
@@ -66,9 +56,11 @@ void test(void)
       memo->pb_block[0x0000] = (byte) opcode;
       memo->pb_block[0x0001] = (byte) b1;
       memo->pb_block[0x0002] = (byte) b2;
+      memo->pb_block[S65_VECTOR_RES] = 0x10;
+      memo->pb_block[S65_VECTOR_RES + 1] = 0x11;
 
-      const instruction_t *in = s65_decode(memo, S65_SET_6500);
-      op_result_t *rop = s65_convert(memo, S65_SET_6500);
+      const instruction_t *in = s65_decode((byte) opcode);
+      const op_result_t *rop = s65_convert_int(S65_INT_RESET);
 
       word pc = S65_PACK(*s65_cpu_reg(S65_REG_PCH), *s65_cpu_reg(S65_REG_PCL));
       word ab = 0;
@@ -79,38 +71,33 @@ void test(void)
       for(int cycle = 0, i = 0; i < rop->sz_count;)
       {
          printf("CYCLE: %d\n", cycle);
+         
          /* Executing ONE cycle */
          while(rop->op_list[i].d_cycle == cycle && i < rop->sz_count)
          {
-            /* Writing to DATA: update memo */
-            if(rop->op_list[i].d_flags & S65_OPFLAG_WRITE)
-            {
-               /* Getting AB */
-               ab = S65_PACK(*s65_cpu_reg(S65_REG_ABH), *s65_cpu_reg(S65_REG_ABL));
-               memo->pb_block[ab] = *s65_cpu_reg(S65_REG_DATA);
-            }
-            else /* Reading from DATA: update DATA */
-            if(rop->op_list[i].d_flags & S65_OPFLAG_READ)
+            /* USING DATA: update DATA */
+            if((rop->op_list[i].ad_first == S65_REG_DATA || rop->op_list[i].ad_secnd == S65_REG_DATA))
             {
                /* Getting AB */
                ab = S65_PACK(*s65_cpu_reg(S65_REG_ABH), *s65_cpu_reg(S65_REG_ABL));
                *s65_cpu_reg(S65_REG_DATA) = memo->pb_block[ab];
+               printf("DATA %02x -> %04x\n", memo->pb_block[ab], ab);
             }
 
-            s65_cpu_exe(&rop->op_list[i]);
+            if(s65_cpu_exe(&rop->op_list[i]) == S65_CPURET_SKIPPED)
+               ++cnt;
 
-            /* Writing to DATA: update memo */
-            if(rop->op_list[i].d_flags & S65_OPFLAG_WRITE)
+            /* DATA HAS BEEN MODIFIED: update memory */
+            if(rop->op_list[i].ad_first == S65_REG_DATA && (rop->op_list[i].d_flags & S65_OPFLAG_WRITE))
             {
                /* Getting AB */
                ab = S65_PACK(*s65_cpu_reg(S65_REG_ABH), *s65_cpu_reg(S65_REG_ABL));
                memo->pb_block[ab] = *s65_cpu_reg(S65_REG_DATA);
+               printf("%04x -> DATA: %02x\n", ab, memo->pb_block[ab]);
             }
 
             ++i;
          }
-
-         
 
          if(i < rop->sz_count)
             cycle = rop->op_list[i].d_cycle;
@@ -119,11 +106,8 @@ void test(void)
                
       }
 
-      //printf("OPERATIONS: \t%u\tCYCLES:\t%d\n", cnt, cycles);
+      printf("[OPERATIONS SKIPPED]:\t%d\n", cnt);
       print();
-
-      free(rop->op_list);
-      free(rop);
       fflush(stdin);
    }
 
@@ -145,7 +129,7 @@ void print(void)
       printf(" ... ");
       
       for(int i = 0; i < 16; ++i)
-         printf("%02x ", memo->pb_block[S65_PACK(1, i)]);
+         printf("%02x ", memo->pb_block[S65_PACK(1, 240 + i)]);
 
       printf("\n");
 }

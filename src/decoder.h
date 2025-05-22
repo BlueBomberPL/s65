@@ -35,8 +35,14 @@
 #define S65_ASM_AS_OCTAL        (1 << 2)    /* Writing values in octal system   */
 #define S65_ASM_SHORTEN         (1 << 3)    /* Using register abbreviations     */
 
+#define S65_INT_RESET           0           /* RESET procedure                  */
+#define S65_INT_NMI             1           /* Non-maskable interruption        */
+#define S65_INT_IRQ             2           /* Maskable interruption            */
+
 /* Checks if given mnemo is 'illegal' */
-#define S65_IS_ILLEGAL(s)       (strchr((s), '!') != NULL)    
+#define S65_IS_ILLEGAL(s)       (strchr((s), '!') != NULL) 
+/* Checks if given mnemo is 'special' */
+#define S65_IS_SPECIAL(s)       (strchr((s), '*') != NULL)       
 
 /* Converts a byte from binary to BCD */
 #define S65_TO_BCD(x)           ((((x) / 10) << 4) + ((x) % 10))
@@ -49,17 +55,6 @@
 #include "types.h"
 
 #include <assert.h>
-
-/* Instruction sets */
-typedef enum _s65_instr_set
-{
-    S65_SET_6500,                           /* Original NMOS 6500 set     */
-    S65_SET_65C00,                          /* Original 65C00 set         */
-    S65_SET_WDC65C00,                       /* WDC 65C00 set (the biggest)*/
-
-    S65_SET_TOTAL
-
-} instruction_set_t;
 
 /* Addressing modes */
 typedef enum _s65_addrmode
@@ -131,7 +126,6 @@ typedef struct _s65_instr
     char       *s_mnemo;                    /* Assembly mnemonic           */
     byte        b_opcode;                   /* The OPCODE value            */
     addrmode_t  am_mode;                    /* The addressing mode         */
-    instruction_set_t st_set;               /* The instruction set         */
 
 } instruction_t;
 
@@ -210,27 +204,35 @@ op_result_t        *s65_op_add(op_result_t *rop_dest, optype_t op_type, addr_t a
 
 /* Translates an instruction.
  *
- * @param dt_memory     program memory data
- * @param st_set        instruction set
+ * @param b_opcode      the OPCODE
  * 
  * @returns Valid instruction type or
  * NULL if failed.
  */
-const instruction_t *s65_decode(const data_t *dt_memory, instruction_set_t st_set);
+const instruction_t *s65_decode(byte b_opcode);
 
-/* Converts an instruction into the list
+/* Converts an instruction into a list
  * of operations.
  *
- * @param dt_memory     program memory data
- * @param st_set        instruction set
+ * @param b_opcode      the OPCODE
  * 
  * @returns Valid pointer to op_result or 
  * NULL if failed.
  */
-op_result_t        *s65_convert(const data_t *dt_memory, instruction_set_t st_set);
+op_result_t        *s65_convert(byte b_opcode);
+
+/* Converts an interruption into a list
+ * of operations.
+ *
+ * @param b_int      the interruption type (S65_INT_*)
+ * 
+ * @returns Valid pointer to op_result or 
+ * NULL if failed.
+ */
+const op_result_t *s65_convert_int(byte b_int);
 
 /* Gives one operation, unique for given 
- * 1 byte instruction (ASL, CLI, TAY etc.).
+ * instruction (ASL, CLI, TAY etc.).
  *
  * @param in_instr      the instruction
  * 

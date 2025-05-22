@@ -6,9 +6,6 @@
 
  #include "cpu.h"
 
-/* Current pin (CPU_PIN) state (1-HIGH, 0-LOW) */
-static int g_pin_state = 0;
-
 /* Current CPU state */
 static cpu_state_t g_state = S65_PREINIT;
 
@@ -16,7 +13,7 @@ static cpu_state_t g_state = S65_PREINIT;
 /* Contains the registers only */
 static data_t *g_registers;
 
-/* Sets up CPU variables. 
+/* Sets up the CPU variables. 
  *
  * @returns Zero value if
  * succeeded.
@@ -32,123 +29,6 @@ int s65_cpu_init(void)
 
     /* OK */
     return EXIT_SUCCESS;
-}
-
-/* Resets the CPU.
- * Engages RESET sequence.
- *
- * @returns Number of cycles executed.
- */
-size_t s65_cpu_reset(void)
-{
-    assert(g_registers);
-
-    /* Creating new operation list */
-    /* Once it's created it can be used */
-    /* many times */
-    static op_result_t *rop_reset = NULL;
-    if(rop_reset == NULL && (rop_reset = s65_new_opresult(0u)) == NULL)
-    {
-        /* Failed */
-        return 0;
-    }
-
-    /* Filling the list if not done yet */
-    if(rop_reset->sz_count == 0u)
-    {
-        /* Based on visual6502.org */
-
-        int d_cycle = 0;
-
-        /* [T0] */
-
-        /* Setting SP to 0x00 */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_SP,         0x00,           d_cycle, S65_OPFLAG_READ                   );
-        /* Setting PC to 0x00FF */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_PCL,        0xFF,           d_cycle, S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_PCH,        0x00,           d_cycle, S65_OPFLAG_READ                   );
-        /* Setting address bus to PC and discarding */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T1] */ d_cycle++;
-
-        /* Setting address bus to PC and discarding again */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T2] */ d_cycle++;
-
-        /* Setting address bus to PC and discarding again */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T3] */ d_cycle++;
-
-        /* Setting address bus to 9-bit SP (0x100) and discarding */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T4] */ d_cycle++;
-
-        /* Decrementing SP (0x00 --> 0xFF / 0x100 --> 0x1FF) */
-        s65_op_add(rop_reset, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_READ                   );
-        /* Setting address bus to 9-bit SP (0x1FF) and discarding */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T5] */ d_cycle++;
-
-        /* Decrementing SP (0xFF --> 0xFE / 0x1FF --> 0x1FE) */
-        s65_op_add(rop_reset, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_READ                   );
-        /* Setting address bus to 9-bit SP (0x1FE) and discarding */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T6] */ d_cycle++;
-
-        /* Decrementing SP (0xFE --> 0xFD / 0x1FE --> 0x1FD) */
-        s65_op_add(rop_reset, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_READ                   );
-        /* Setting address bus to reset vector (0xFFFC) */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_RES),  d_cycle, S65_OPFLAG_READ          );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_RES), d_cycle, S65_OPFLAG_READ          );
-        /* Reading address low */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ADL,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T7] */ d_cycle++;
-
-        /* Setting address bus to reset vector + 1 (0xFFFD) */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_RES + 1u),  d_cycle, S65_OPFLAG_READ     );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_RES + 1u), d_cycle, S65_OPFLAG_READ     );
-        /* Reading address high */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_ADH,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ                   );
-        /* Setting I flag */
-        s65_op_add(rop_reset, S65_OP_SET,       S65_REG_SREG,      S65_SREG_I,      d_cycle, S65_OPFLAG_READ                   );
-        /* Clearing D flag */
-        s65_op_add(rop_reset, S65_OP_CLEAR,     S65_REG_SREG,      S65_SREG_D,      d_cycle, S65_OPFLAG_READ                   );
-
-        /* [T0] */
-
-        /* Updating PC */
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_PCL,        S65_REG_ADL,    0      , S65_OPFLAG_READ                   );
-        s65_op_add(rop_reset, S65_OP_LOAD,      S65_REG_PCH,        S65_REG_ADH,    0      , S65_OPFLAG_READ                   );
-
-        /* Instruction execution at PC */
-    }
-
-    /* RESET procedure is defined */
-    /* it can be executed */
-
-    for(size_t i = 0u; i < rop_reset->sz_count; ++i)
-    {
-        s65_cpu_exe(&rop_reset->op_list[i]);
-    }
-
-    /* Updating the state */
-    g_state = S65_RUNNING;
-
-    /* Returning # of cycles of RESET */
-    return s65_instr_cycles(rop_reset);
 }
 
 /* Executes an operation.
@@ -299,22 +179,24 @@ int s65_cpu_exe(const operation_t *op)
             const word tmp_old_a = tmp_a;
 
             /* Value to add (-128; 127) == B */
-            int tmp_b = S65_IS_REG(ad_op_b) ? (int) *s65_cpu_reg(ad_op_b) : (int) ad_op_b;
+            sbyte tmp_b = S65_IS_REG(ad_op_b) ? *s65_cpu_reg(ad_op_b) : ad_op_b;
 
             /* Translating the value U2 -> +- decimal */
-            tmp_b = (tmp_b >= 128) ? (tmp_b - 256) : tmp_b;
+            tmp_b = (tmp_b < 0) ? (tmp_b - 256) : tmp_b;
 
             /* Operation (adding C' only if OP_AD2C) */
-            tmp_a += tmp_b + (op->ot_type == S65_OP_AD2C) ? d_internal_c : 0;
+            tmp_a += tmp_b + ((op->ot_type == S65_OP_AD2C) ? d_internal_c : 0);
             
             /* Putting the A value back */
-            *s65_cpu_reg(ad_op_a) = (byte) tmp_a;
+            *s65_cpu_reg(ad_op_a) = S65_LOW(tmp_a);
 
-            /* Calculating C' */
-            d_internal_c = !!s65_is_page_crossed(tmp_old_a, tmp_a);
+            /* Calculating C' (negative if B is negative) */
+            d_internal_c = !!s65_is_page_crossed(tmp_old_a, tmp_a) * ((tmp_b < 0) ? -1 : 1);
+
+            printf("%d: AD2($%02x) + $%02x = $%02x\n", op->d_cycle, tmp_old_a, tmp_b, *s65_cpu_reg(ad_op_a));
 
             /* Conditions */
-            is_page_crossed = (d_internal_c == 1);
+            is_page_crossed = (d_internal_c != 0);
             break;
         }
 
@@ -344,7 +226,7 @@ int s65_cpu_exe(const operation_t *op)
             d_internal_c = !!s65_is_page_crossed(tmp_old_a, tmp_result);
 
             /* Storing back */
-            *s65_cpu_reg(ad_op_a) = (byte) tmp_result;
+            *s65_cpu_reg(ad_op_a) = S65_LOW(tmp_result);
 
 //            printf("ADDING %s ($%02x) to %s ($%02x) = $%02x/$%02x\n", s65_reg_to_asci(ad_op_b, 0), tmp_val, s65_reg_to_asci(ad_op_a, 0), tmp_old_a, *s65_cpu_reg(ad_op_a), tmp_result);
 
@@ -385,6 +267,8 @@ int s65_cpu_exe(const operation_t *op)
                 }
             }
 
+            printf("%d: ADC ACC($%02x) += $%02x = $%02x\n", op->d_cycle, tmp_old_a, tmp_val, tmp_result);
+
             /* Managing flags */
 
             /* Carry flag */
@@ -414,7 +298,7 @@ int s65_cpu_exe(const operation_t *op)
                 s65_cpu_clr_flag(S65_SREG_V);
 
             /* Storing back the value */
-            *s65_cpu_reg(ad_op_a) = (byte) tmp_result;
+            *s65_cpu_reg(ad_op_a) = S65_LOW(tmp_result);
             break;
         }
 
@@ -566,7 +450,7 @@ int s65_cpu_exe(const operation_t *op)
             break;
         }
 
-        /* Shifts A (reg) left, bit 7 is put in C.
+        /* Shifts A (reg.) left, bit 7 is put in C.
          * Bit 0 is set to zero. Used by ASL instr.
          *
          * Flags:               N, Z, C
@@ -601,13 +485,13 @@ int s65_cpu_exe(const operation_t *op)
             else
                 s65_cpu_clr_flag(S65_SREG_N);
 
+            printf("%d: ASL(%02x) = %02x\n", op->d_cycle, *s65_cpu_reg(ad_op_a), tmp_a);
             /* Storing back */
             *s65_cpu_reg(ad_op_a) = tmp_a;
-
             break;
         }
 
-        /* Shifts A (reg) right, bit 0 is put in C.
+        /* Shifts A (reg.) right, bit 0 is put in C.
          * Bit 7 is set to zero. Used by LSR instr.
          *
          * Flags:               N = 0, Z, C
@@ -648,7 +532,7 @@ int s65_cpu_exe(const operation_t *op)
             break;
         }
 
-        /* Rotates A (reg) left/right, bit 7/0 is put in C.
+        /* Rotates A (reg.) left/right, bit 7/0 is put in C.
          * Bit 0/7 is set to C. Used by ROL/ROR instr.
          *
          * Flags:               N, Z, C
@@ -982,4 +866,13 @@ void s65_cpu_clr_flag(byte b_flag)
 {
     assert(g_registers);
     *s65_cpu_reg(S65_REG_SREG) &= ~(1 << b_flag);
+}
+
+/* Queries the CPU's state.
+ *
+ * @returns The state.
+ */
+cpu_state_t s65_cpu_get_state(void)
+{
+    return g_state;
 }

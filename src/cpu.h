@@ -39,19 +39,12 @@ typedef enum _65_cpustate
 
 } cpu_state_t;
 
-/* Sets up CPU variables. 
+/* Sets up the CPU variables. 
  *
  * @returns Positive value if
  * succeeded.
  */
 int                s65_cpu_init(void);
-
-/* Resets the CPU.
- * Engages RESET sequence.
- *
- * @returns Number of cycles executed.
- */
-size_t             s65_cpu_reset(void);
 
 /* Executes an operation.
  *
@@ -90,5 +83,11 @@ void               s65_cpu_set_flag(byte b_flag);
  * @param b_flag        the flag (S65_SREG_*)
  */
 void               s65_cpu_clr_flag(byte b_flag);
+
+/* Queries the CPU's state.
+ *
+ * @returns The state.
+ */
+cpu_state_t        s65_cpu_get_state(void);
 
 #endif /* _S65_CPU_H_FILE_ */

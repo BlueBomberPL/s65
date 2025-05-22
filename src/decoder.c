@@ -10,330 +10,264 @@
 static const instruction_t gc_instructions[] =
 {
     /* Standard 6500 set (documented only) */
-    { "BRK",     0x00, S65_IMPLIED,             S65_SET_6500     },
-    { "ORA",     0x01, S65_INDIRECT_X,          S65_SET_6500     },
-    { "ORA",     0x05, S65_ZEROPAGE,            S65_SET_6500     },
-    { "ASL",     0x06, S65_ZEROPAGE,            S65_SET_6500     },
-    { "PHP",     0x08, S65_IMPLIED,             S65_SET_6500     },
-    { "ORA",     0x09, S65_IMMEDIATE,           S65_SET_6500     },
-    { "ASL",     0x0A, S65_ACCUMULATOR,         S65_SET_6500     },
-    { "ORA",     0x0D, S65_ABSOLUTE,            S65_SET_6500     },
-    { "ASL",     0x0E, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BPL",     0x10, S65_RELATIVE,            S65_SET_6500     },
-    { "ORA",     0x11, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "ORA",     0x15, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "ASL",     0x16, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "CLC",     0x18, S65_IMPLIED,             S65_SET_6500     },
-    { "ORA",     0x19, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "ORA",     0x1D, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "ASL",     0x1E, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "JSR",     0x20, S65_ABSOLUTE,            S65_SET_6500     },
-    { "AND",     0x21, S65_INDIRECT_X,          S65_SET_6500     },
-    { "BIT",     0x24, S65_ZEROPAGE,            S65_SET_6500     },
-    { "AND",     0x25, S65_ZEROPAGE,            S65_SET_6500     },
-    { "ROL",     0x26, S65_ZEROPAGE,            S65_SET_6500     },
-    { "PLP",     0x28, S65_IMPLIED,             S65_SET_6500     },
-    { "AND",     0x29, S65_IMMEDIATE,           S65_SET_6500     },
-    { "ROL",     0x2A, S65_ACCUMULATOR,         S65_SET_6500     },
-    { "BIT",     0x2C, S65_ABSOLUTE,            S65_SET_6500     },
-    { "AND",     0x2D, S65_ABSOLUTE,            S65_SET_6500     },
-    { "ROL",     0x2E, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BMI",     0x30, S65_RELATIVE,            S65_SET_6500     },
-    { "AND",     0x31, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "AND",     0x35, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "ROL",     0x36, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "SEC",     0x38, S65_IMPLIED,             S65_SET_6500     },
-    { "AND",     0x39, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "AND",     0x3D, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "ROL",     0x3E, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "RTI",     0x40, S65_IMPLIED,             S65_SET_6500     },
-    { "EOR",     0x41, S65_INDIRECT_X,          S65_SET_6500     },
-    { "EOR",     0x45, S65_ZEROPAGE,            S65_SET_6500     },
-    { "LSR",     0x46, S65_ZEROPAGE,            S65_SET_6500     },
-    { "PHA",     0x48, S65_IMPLIED,             S65_SET_6500     },
-    { "EOR",     0x49, S65_IMMEDIATE,           S65_SET_6500     },
-    { "LSR",     0x4A, S65_ACCUMULATOR,         S65_SET_6500     },
-    { "JMP",     0x4C, S65_ABSOLUTE,            S65_SET_6500     },
-    { "EOR",     0x4D, S65_ABSOLUTE,            S65_SET_6500     },
-    { "LSR",     0x4E, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BVC",     0x50, S65_RELATIVE,            S65_SET_6500     },
-    { "EOR",     0x51, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "EOR",     0x55, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "LSR",     0x56, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "CLI",     0x58, S65_IMPLIED,             S65_SET_6500     },
-    { "EOR",     0x59, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "EOR",     0x5D, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "LSR",     0x5E, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "RTS",     0x60, S65_IMPLIED,             S65_SET_6500     },
-    { "ADC",     0x61, S65_INDIRECT_X,          S65_SET_6500     },
-    { "ADC",     0x65, S65_ZEROPAGE,            S65_SET_6500     },
-    { "ROR",     0x66, S65_ZEROPAGE,            S65_SET_6500     },
-    { "PLA",     0x68, S65_IMPLIED,             S65_SET_6500     },
-    { "ADC",     0x69, S65_IMMEDIATE,           S65_SET_6500     },
-    { "ROR",     0x6A, S65_ACCUMULATOR,         S65_SET_6500     },
-    { "JMP",     0x6C, S65_INDIRECT,            S65_SET_6500     },
-    { "ADC",     0x6D, S65_ABSOLUTE,            S65_SET_6500     },
-    { "ROR",     0x6E, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BVS",     0x70, S65_RELATIVE,            S65_SET_6500     },
-    { "ADC",     0x71, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "ADC",     0x75, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "ROR",     0x76, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "SEI",     0x78, S65_IMPLIED,             S65_SET_6500     },
-    { "ADC",     0x79, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "ADC",     0x7D, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "ROR",     0x7E, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "STA",     0x81, S65_INDIRECT_X,          S65_SET_6500     },
-    { "STY",     0x84, S65_ZEROPAGE,            S65_SET_6500     },
-    { "STA",     0x85, S65_ZEROPAGE,            S65_SET_6500     },
-    { "STX",     0x86, S65_ZEROPAGE,            S65_SET_6500     },
-    { "DEY",     0x88, S65_IMPLIED,             S65_SET_6500     },
-    { "TXA",     0x8A, S65_IMPLIED,             S65_SET_6500     },
-    { "STY",     0x8C, S65_ABSOLUTE,            S65_SET_6500     },
-    { "STA",     0x8D, S65_ABSOLUTE,            S65_SET_6500     },
-    { "STX",     0x8E, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BCC",     0x90, S65_RELATIVE,            S65_SET_6500     },
-    { "STA",     0x91, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "STY",     0x94, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "STA",     0x95, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "STX",     0x96, S65_ZEROPAGE_Y,          S65_SET_6500     },
-    { "TYA",     0x98, S65_IMPLIED,             S65_SET_6500     },
-    { "STA",     0x99, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "TXS",     0x9A, S65_IMPLIED,             S65_SET_6500     },
-    { "STA",     0x9D, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "LDY",     0xA0, S65_IMMEDIATE,           S65_SET_6500     },
-    { "LDA",     0xA1, S65_INDIRECT_X,          S65_SET_6500     },
-    { "LDX",     0xA2, S65_IMMEDIATE,           S65_SET_6500     },
-    { "LDY",     0xA4, S65_ZEROPAGE,            S65_SET_6500     },
-    { "LDA",     0xA5, S65_ZEROPAGE,            S65_SET_6500     },
-    { "LDX",     0xA6, S65_ZEROPAGE,            S65_SET_6500     },
-    { "TAY",     0xA8, S65_IMPLIED,             S65_SET_6500     },
-    { "LDA",     0xA9, S65_IMMEDIATE,           S65_SET_6500     },
-    { "TAX",     0xAA, S65_IMPLIED,             S65_SET_6500     },
-    { "LDY",     0xAC, S65_ABSOLUTE,            S65_SET_6500     },
-    { "LDA",     0xAD, S65_ABSOLUTE,            S65_SET_6500     },
-    { "LDX",     0xAE, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BCS",     0xB0, S65_RELATIVE,            S65_SET_6500     },
-    { "LDA",     0xB1, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "LDY",     0xB4, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "LDA",     0xB5, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "LDX",     0xB6, S65_ZEROPAGE_Y,          S65_SET_6500     },
-    { "CLV",     0xB8, S65_IMPLIED,             S65_SET_6500     },
-    { "LDA",     0xB9, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "TSX",     0xBA, S65_IMPLIED,             S65_SET_6500     },
-    { "LDY",     0xBC, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "LDA",     0xBD, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "LDX",     0xBE, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "CPY",     0xC0, S65_IMMEDIATE,           S65_SET_6500     },
-    { "CMP",     0xC1, S65_INDIRECT_X,          S65_SET_6500     },
-    { "CPY",     0xC4, S65_ZEROPAGE,            S65_SET_6500     },
-    { "CMP",     0xC5, S65_ZEROPAGE,            S65_SET_6500     },
-    { "DEC",     0xC6, S65_ZEROPAGE,            S65_SET_6500     },
-    { "INY",     0xC8, S65_IMPLIED,             S65_SET_6500     },
-    { "CMP",     0xC9, S65_IMMEDIATE,           S65_SET_6500     },
-    { "DEX",     0xCA, S65_IMPLIED,             S65_SET_6500     },
-    { "CPY",     0xCC, S65_ABSOLUTE,            S65_SET_6500     },
-    { "CMP",     0xCD, S65_ABSOLUTE,            S65_SET_6500     },
-    { "DEC",     0xCE, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BNE",     0xD0, S65_RELATIVE,            S65_SET_6500     },
-    { "CMP",     0xD1, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "CMP",     0xD5, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "DEC",     0xD6, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "CLD",     0xD8, S65_IMPLIED,             S65_SET_6500     },
-    { "CMP",     0xD9, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "CMP",     0xDD, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "DEC",     0xDE, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "CPX",     0xE0, S65_IMMEDIATE,           S65_SET_6500     },
-    { "SBC",     0xE1, S65_INDIRECT_X,          S65_SET_6500     },
-    { "CPX",     0xE4, S65_ZEROPAGE,            S65_SET_6500     },
-    { "SBC",     0xE5, S65_ZEROPAGE,            S65_SET_6500     },
-    { "INC",     0xE6, S65_ZEROPAGE,            S65_SET_6500     },
-    { "INX",     0xE8, S65_IMPLIED,             S65_SET_6500     },
-    { "SBC",     0xE9, S65_IMMEDIATE,           S65_SET_6500     },
-    { "NOP",     0xEA, S65_IMPLIED,             S65_SET_6500     },
-    { "CPX",     0xEC, S65_ABSOLUTE,            S65_SET_6500     },
-    { "SBC",     0xED, S65_ABSOLUTE,            S65_SET_6500     },
-    { "INC",     0xEE, S65_ABSOLUTE,            S65_SET_6500     },
-    { "BEQ",     0xF0, S65_RELATIVE,            S65_SET_6500     },
-    { "SBC",     0xF1, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "SBC",     0xF5, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "INC",     0xF6, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "SED",     0xF8, S65_IMPLIED,             S65_SET_6500     },
-    { "SBC",     0xF9, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "SBC",     0xFD, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "INC",     0xFE, S65_ABSOLUTE_X,          S65_SET_6500     },
+    { "BRK",     0x00, S65_IMPLIED,     },
+    { "ORA",     0x01, S65_INDIRECT_X,  },
+    { "ORA",     0x05, S65_ZEROPAGE,    },
+    { "ASL",     0x06, S65_ZEROPAGE,    },
+    { "PHP",     0x08, S65_IMPLIED,     },
+    { "ORA",     0x09, S65_IMMEDIATE,   },
+    { "ASL",     0x0A, S65_ACCUMULATOR, },
+    { "ORA",     0x0D, S65_ABSOLUTE,    },
+    { "ASL",     0x0E, S65_ABSOLUTE,    },
+    { "BPL",     0x10, S65_RELATIVE,    },
+    { "ORA",     0x11, S65_INDIRECT_Y,  },
+    { "ORA",     0x15, S65_ZEROPAGE_X,  },
+    { "ASL",     0x16, S65_ZEROPAGE_X,  },
+    { "CLC",     0x18, S65_IMPLIED,     },
+    { "ORA",     0x19, S65_ABSOLUTE_Y,  },
+    { "ORA",     0x1D, S65_ABSOLUTE_X,  },
+    { "ASL",     0x1E, S65_ABSOLUTE_X,  },
+    { "JSR",     0x20, S65_ABSOLUTE,    },
+    { "AND",     0x21, S65_INDIRECT_X,  },
+    { "BIT",     0x24, S65_ZEROPAGE,    },
+    { "AND",     0x25, S65_ZEROPAGE,    },
+    { "ROL",     0x26, S65_ZEROPAGE,    },
+    { "PLP",     0x28, S65_IMPLIED,     },
+    { "AND",     0x29, S65_IMMEDIATE,   },
+    { "ROL",     0x2A, S65_ACCUMULATOR, },
+    { "BIT",     0x2C, S65_ABSOLUTE,    },
+    { "AND",     0x2D, S65_ABSOLUTE,    },
+    { "ROL",     0x2E, S65_ABSOLUTE,    },
+    { "BMI",     0x30, S65_RELATIVE,    },
+    { "AND",     0x31, S65_INDIRECT_Y,  },
+    { "AND",     0x35, S65_ZEROPAGE_X,  },
+    { "ROL",     0x36, S65_ZEROPAGE_X,  },
+    { "SEC",     0x38, S65_IMPLIED,     },
+    { "AND",     0x39, S65_ABSOLUTE_Y,  },
+    { "AND",     0x3D, S65_ABSOLUTE_X,  },
+    { "ROL",     0x3E, S65_ABSOLUTE_X,  },
+    { "RTI",     0x40, S65_IMPLIED,     },
+    { "EOR",     0x41, S65_INDIRECT_X,  },
+    { "EOR",     0x45, S65_ZEROPAGE,    },
+    { "LSR",     0x46, S65_ZEROPAGE,    },
+    { "PHA",     0x48, S65_IMPLIED,     },
+    { "EOR",     0x49, S65_IMMEDIATE,   },
+    { "LSR",     0x4A, S65_ACCUMULATOR, },
+    { "JMP",     0x4C, S65_ABSOLUTE,    },
+    { "EOR",     0x4D, S65_ABSOLUTE,    },
+    { "LSR",     0x4E, S65_ABSOLUTE,    },
+    { "BVC",     0x50, S65_RELATIVE,    },
+    { "EOR",     0x51, S65_INDIRECT_Y,  },
+    { "EOR",     0x55, S65_ZEROPAGE_X,  },
+    { "LSR",     0x56, S65_ZEROPAGE_X,  },
+    { "CLI",     0x58, S65_IMPLIED,     },
+    { "EOR",     0x59, S65_ABSOLUTE_Y,  },
+    { "EOR",     0x5D, S65_ABSOLUTE_X,  },
+    { "LSR",     0x5E, S65_ABSOLUTE_X,  },
+    { "RTS",     0x60, S65_IMPLIED,     },
+    { "ADC",     0x61, S65_INDIRECT_X,  },
+    { "ADC",     0x65, S65_ZEROPAGE,    },
+    { "ROR",     0x66, S65_ZEROPAGE,    },
+    { "PLA",     0x68, S65_IMPLIED,     },
+    { "ADC",     0x69, S65_IMMEDIATE,   },
+    { "ROR",     0x6A, S65_ACCUMULATOR, },
+    { "JMP",     0x6C, S65_INDIRECT,    },
+    { "ADC",     0x6D, S65_ABSOLUTE,    },
+    { "ROR",     0x6E, S65_ABSOLUTE,    },
+    { "BVS",     0x70, S65_RELATIVE,    },
+    { "ADC",     0x71, S65_INDIRECT_Y,  },
+    { "ADC",     0x75, S65_ZEROPAGE_X,  },
+    { "ROR",     0x76, S65_ZEROPAGE_X,  },
+    { "SEI",     0x78, S65_IMPLIED,     },
+    { "ADC",     0x79, S65_ABSOLUTE_Y,  },
+    { "ADC",     0x7D, S65_ABSOLUTE_X,  },
+    { "ROR",     0x7E, S65_ABSOLUTE_X,  },
+    { "STA",     0x81, S65_INDIRECT_X,  },
+    { "STY",     0x84, S65_ZEROPAGE,    },
+    { "STA",     0x85, S65_ZEROPAGE,    },
+    { "STX",     0x86, S65_ZEROPAGE,    },
+    { "DEY",     0x88, S65_IMPLIED,     },
+    { "TXA",     0x8A, S65_IMPLIED,     },
+    { "STY",     0x8C, S65_ABSOLUTE,    },
+    { "STA",     0x8D, S65_ABSOLUTE,    },
+    { "STX",     0x8E, S65_ABSOLUTE,    },
+    { "BCC",     0x90, S65_RELATIVE,    },
+    { "STA",     0x91, S65_INDIRECT_Y,  },
+    { "STY",     0x94, S65_ZEROPAGE_X,  },
+    { "STA",     0x95, S65_ZEROPAGE_X,  },
+    { "STX",     0x96, S65_ZEROPAGE_Y,  },
+    { "TYA",     0x98, S65_IMPLIED,     },
+    { "STA",     0x99, S65_ABSOLUTE_Y,  },
+    { "TXS",     0x9A, S65_IMPLIED,     },
+    { "STA",     0x9D, S65_ABSOLUTE_X,  },
+    { "LDY",     0xA0, S65_IMMEDIATE,   },
+    { "LDA",     0xA1, S65_INDIRECT_X,  },
+    { "LDX",     0xA2, S65_IMMEDIATE,   },
+    { "LDY",     0xA4, S65_ZEROPAGE,    },
+    { "LDA",     0xA5, S65_ZEROPAGE,    },
+    { "LDX",     0xA6, S65_ZEROPAGE,    },
+    { "TAY",     0xA8, S65_IMPLIED,     },
+    { "LDA",     0xA9, S65_IMMEDIATE,   },
+    { "TAX",     0xAA, S65_IMPLIED,     },
+    { "LDY",     0xAC, S65_ABSOLUTE,    },
+    { "LDA",     0xAD, S65_ABSOLUTE,    },
+    { "LDX",     0xAE, S65_ABSOLUTE,    },
+    { "BCS",     0xB0, S65_RELATIVE,    },
+    { "LDA",     0xB1, S65_INDIRECT_Y,  },
+    { "LDY",     0xB4, S65_ZEROPAGE_X,  },
+    { "LDA",     0xB5, S65_ZEROPAGE_X,  },
+    { "LDX",     0xB6, S65_ZEROPAGE_Y,  },
+    { "CLV",     0xB8, S65_IMPLIED,     },
+    { "LDA",     0xB9, S65_ABSOLUTE_Y,  },
+    { "TSX",     0xBA, S65_IMPLIED,     },
+    { "LDY",     0xBC, S65_ABSOLUTE_X,  },
+    { "LDA",     0xBD, S65_ABSOLUTE_X,  },
+    { "LDX",     0xBE, S65_ABSOLUTE_Y,  },
+    { "CPY",     0xC0, S65_IMMEDIATE,   },
+    { "CMP",     0xC1, S65_INDIRECT_X,  },
+    { "CPY",     0xC4, S65_ZEROPAGE,    },
+    { "CMP",     0xC5, S65_ZEROPAGE,    },
+    { "DEC",     0xC6, S65_ZEROPAGE,    },
+    { "INY",     0xC8, S65_IMPLIED,     },
+    { "CMP",     0xC9, S65_IMMEDIATE,   },
+    { "DEX",     0xCA, S65_IMPLIED,     },
+    { "CPY",     0xCC, S65_ABSOLUTE,    },
+    { "CMP",     0xCD, S65_ABSOLUTE,    },
+    { "DEC",     0xCE, S65_ABSOLUTE,    },
+    { "BNE",     0xD0, S65_RELATIVE,    },
+    { "CMP",     0xD1, S65_INDIRECT_Y,  },
+    { "CMP",     0xD5, S65_ZEROPAGE_X,  },
+    { "DEC",     0xD6, S65_ZEROPAGE_X,  },
+    { "CLD",     0xD8, S65_IMPLIED,     },
+    { "CMP",     0xD9, S65_ABSOLUTE_Y,  },
+    { "CMP",     0xDD, S65_ABSOLUTE_X,  },
+    { "DEC",     0xDE, S65_ABSOLUTE_X,  },
+    { "CPX",     0xE0, S65_IMMEDIATE,   },
+    { "SBC",     0xE1, S65_INDIRECT_X,  },
+    { "CPX",     0xE4, S65_ZEROPAGE,    },
+    { "SBC",     0xE5, S65_ZEROPAGE,    },
+    { "INC",     0xE6, S65_ZEROPAGE,    },
+    { "INX",     0xE8, S65_IMPLIED,     },
+    { "SBC",     0xE9, S65_IMMEDIATE,   },
+    { "NOP",     0xEA, S65_IMPLIED,     },
+    { "CPX",     0xEC, S65_ABSOLUTE,    },
+    { "SBC",     0xED, S65_ABSOLUTE,    },
+    { "INC",     0xEE, S65_ABSOLUTE,    },
+    { "BEQ",     0xF0, S65_RELATIVE,    },
+    { "SBC",     0xF1, S65_INDIRECT_Y,  },
+    { "SBC",     0xF5, S65_ZEROPAGE_X,  },
+    { "INC",     0xF6, S65_ZEROPAGE_X,  },
+    { "SED",     0xF8, S65_IMPLIED,     },
+    { "SBC",     0xF9, S65_ABSOLUTE_Y,  },
+    { "SBC",     0xFD, S65_ABSOLUTE_X,  },
+    { "INC",     0xFE, S65_ABSOLUTE_X,  },
 
     /* Undocumented original 6500 set */
-    { "JAM!",    0x02, S65_IMPLIED,             S65_SET_6500     },
-    { "SLO!",    0x03, S65_INDIRECT_X,          S65_SET_6500     },
-    { "NOP!",    0x04, S65_ZEROPAGE,            S65_SET_6500     },
-    { "SLO!",    0x07, S65_ZEROPAGE,            S65_SET_6500     },
-    { "ANC!",    0x0B, S65_IMMEDIATE,           S65_SET_6500     },
-    { "NOP!",    0x0C, S65_ABSOLUTE,            S65_SET_6500     },
-    { "SLO!",    0x0F, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0x12, S65_IMPLIED,             S65_SET_6500     },
-    { "SLO!",    0x13, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "NOP!",    0x14, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "SLO!",    0x17, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "NOP!",    0x1A, S65_IMPLIED,             S65_SET_6500     },
-    { "SLO!",    0x1B, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "NOP!",    0x1C, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "SLO!",    0x1F, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "JAM!",    0x22, S65_IMPLIED,             S65_SET_6500     },
-    { "RLA!",    0x23, S65_INDIRECT_X,          S65_SET_6500     },
-    { "RLA!",    0x27, S65_ZEROPAGE,            S65_SET_6500     },
-    { "ANC!",    0x2B, S65_IMMEDIATE,           S65_SET_6500     },
-    { "RLA!",    0x2F, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0x32, S65_IMPLIED,             S65_SET_6500     },
-    { "RLA!",    0x33, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "NOP!",    0x34, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "RLA!",    0x37, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "NOP!",    0x3A, S65_IMPLIED,             S65_SET_6500     },
-    { "RLA!",    0x3B, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "NOP!",    0x3C, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "RLA!",    0x3F, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "JAM!",    0x42, S65_IMPLIED,             S65_SET_6500     },
-    { "SRE!",    0x43, S65_INDIRECT_X,          S65_SET_6500     },
-    { "NOP!",    0x44, S65_ZEROPAGE,            S65_SET_6500     },
-    { "SRE!",    0x47, S65_ZEROPAGE,            S65_SET_6500     },
-    { "ALR!",    0x4B, S65_IMMEDIATE,           S65_SET_6500     },
-    { "SRE!",    0x4F, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0x52, S65_IMPLIED,             S65_SET_6500     },
-    { "SRE!",    0x53, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "NOP!",    0x54, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "SRE!",    0x57, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "NOP!",    0x5A, S65_IMPLIED,             S65_SET_6500     },
-    { "SRE!",    0x5B, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "NOP!",    0x5C, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "SRE!",    0x5F, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "JAM!",    0x62, S65_IMPLIED,             S65_SET_6500     },
-    { "RRA!",    0x63, S65_INDIRECT_X,          S65_SET_6500     },
-    { "NOP!",    0x64, S65_ZEROPAGE,            S65_SET_6500     },
-    { "RRA!",    0x67, S65_ZEROPAGE,            S65_SET_6500     },
-    { "ARR!",    0x6B, S65_IMMEDIATE,           S65_SET_6500     },
-    { "RRA!",    0x6F, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0x72, S65_IMPLIED,             S65_SET_6500     },
-    { "RRA!",    0x73, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "NOP!",    0x74, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "RRA!",    0x77, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "NOP!",    0x7A, S65_IMPLIED,             S65_SET_6500     },
-    { "RRA!",    0x7B, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "NOP!",    0x7C, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "RRA!",    0x7F, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "NOP!",    0x80, S65_IMMEDIATE,           S65_SET_6500     },
-    { "NOP!",    0x82, S65_IMMEDIATE,           S65_SET_6500     },
-    { "SAX!",    0x83, S65_INDIRECT_X,          S65_SET_6500     },
-    { "SAX!",    0x87, S65_ZEROPAGE,            S65_SET_6500     },
-    { "NOP!",    0x89, S65_IMMEDIATE,           S65_SET_6500     },
-    { "ANE!",    0x8B, S65_IMMEDIATE,           S65_SET_6500     },
-    { "SAX!",    0x8F, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0x92, S65_IMPLIED,             S65_SET_6500     },
-    { "SHA!",    0x93, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "SAX!",    0x97, S65_ZEROPAGE_Y,          S65_SET_6500     },
-    { "TAS!",    0x9B, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "SHY!",    0x9C, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "SHX!",    0x9E, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "SHA!",    0x9F, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "LAX!",    0xA3, S65_INDIRECT_X,          S65_SET_6500     },
-    { "LAX!",    0xA7, S65_ZEROPAGE,            S65_SET_6500     },
-    { "LXA!",    0xAB, S65_IMMEDIATE,           S65_SET_6500     },
-    { "LAX!",    0xAF, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0xB2, S65_IMPLIED,             S65_SET_6500     },
-    { "LAX!",    0xB3, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "LAX!",    0xB7, S65_ZEROPAGE_Y,          S65_SET_6500     },
-    { "LAS!",    0xBB, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "LAX!",    0xBF, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "NOP!",    0xC2, S65_IMMEDIATE,           S65_SET_6500     },
-    { "DCP!",    0xC3, S65_INDIRECT_X,          S65_SET_6500     },
-    { "DCP!",    0xC7, S65_ZEROPAGE,            S65_SET_6500     },
-    { "SBX!",    0xCB, S65_IMMEDIATE,           S65_SET_6500     },
-    { "DCP!",    0xCF, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0xD2, S65_IMPLIED,             S65_SET_6500     },
-    { "DCP!",    0xD3, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "NOP!",    0xD4, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "DCP!",    0xD7, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "NOP!",    0xDA, S65_IMPLIED,             S65_SET_6500     },
-    { "DCP!",    0xDB, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "NOP!",    0xDC, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "DCP!",    0xDF, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "NOP!",    0xE2, S65_IMMEDIATE,           S65_SET_6500     },
-    { "ISC!",    0xE3, S65_INDIRECT_X,          S65_SET_6500     },
-    { "ISC!",    0xE7, S65_ZEROPAGE,            S65_SET_6500     },
-    { "SBC!",    0xEB, S65_IMMEDIATE,           S65_SET_6500     },
-    { "ISC!",    0xEF, S65_ABSOLUTE,            S65_SET_6500     },
-    { "JAM!",    0xF2, S65_IMPLIED,             S65_SET_6500     },
-    { "ISC!",    0xF3, S65_INDIRECT_Y,          S65_SET_6500     },
-    { "NOP!",    0xF4, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "ISC!",    0xF7, S65_ZEROPAGE_X,          S65_SET_6500     },
-    { "NOP!",    0xFA, S65_IMPLIED,             S65_SET_6500     },
-    { "ISC!",    0xFB, S65_ABSOLUTE_Y,          S65_SET_6500     },
-    { "NOP!",    0xFC, S65_ABSOLUTE_X,          S65_SET_6500     },
-    { "ISC!",    0xFF, S65_ABSOLUTE_X,          S65_SET_6500     },
-
-    /* Extended (65C00 original) set */
-    { "TSB",     0x04, S65_ZEROPAGE,            S65_SET_65C00    },
-    { "TSB",     0x0C, S65_ABSOLUTE,            S65_SET_65C00    },
-    { "ORA",     0x12, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "TRB",     0x14, S65_ZEROPAGE,            S65_SET_65C00    },
-    { "INC",     0x1A, S65_ACCUMULATOR,         S65_SET_65C00    },
-    { "TRB",     0x1C, S65_ABSOLUTE,            S65_SET_65C00    },
-    { "AND",     0x32, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "BIT",     0x34, S65_ZEROPAGE_X,          S65_SET_65C00    },
-    { "DEC",     0x3A, S65_ACCUMULATOR,         S65_SET_65C00    },
-    { "BIT",     0x3C, S65_ABSOLUTE_X,          S65_SET_65C00    },
-    { "EOR",     0x52, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "PHY",     0x5A, S65_IMPLIED,             S65_SET_65C00    },
-    { "STZ",     0x64, S65_ZEROPAGE,            S65_SET_65C00    },
-    { "ADC",     0x72, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "STZ",     0x74, S65_ZEROPAGE_X,          S65_SET_65C00    },
-    { "PLY",     0x7A, S65_IMPLIED,             S65_SET_65C00    },
-    { "JMP",     0x7C, S65_ABSOLUTE_INDIRECT_X, S65_SET_65C00    },
-    { "BRA",     0x80, S65_RELATIVE,            S65_SET_65C00    },
-    { "BIT",     0x89, S65_IMMEDIATE,           S65_SET_65C00    },
-    { "STA",     0x92, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "STZ",     0x9C, S65_ABSOLUTE,            S65_SET_65C00    },
-    { "STZ",     0x9E, S65_ABSOLUTE_X,          S65_SET_65C00    },
-    { "LDA",     0xB2, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "CMP",     0xD2, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "PHX",     0xDA, S65_IMPLIED,             S65_SET_65C00    },
-    { "SBC",     0xF2, S65_ZEROPAGE_INDIRECT,   S65_SET_65C00    },
-    { "PLX",     0xFA, S65_IMPLIED,             S65_SET_65C00    },
-
-    /* Newest WDC65C00 set (fully defined) 
-    { "RMB0",    0X07, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR0",    0X0F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "RMB1",    0X17, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR1",    0X1F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "RMB2",    0X27, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR2",    0X2F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "RMB3",    0X37, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR3",    0X3F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "RMB4",    0X47, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR4",    0X4F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "RMB5",    0X57, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR5",    0X5F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "RMB6",    0X67, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR6",    0X6F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "RMB7",    0X77, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBR7",    0X7F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB0",    0X87, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBS0",    0X8F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB1",    0X97, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBS1",    0X9F, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB2",    0XA7, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBS2",    0XAF, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB3",    0XB7, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBS3",    0XBF, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB4",    0XC7, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "WAI",     0XCB, S65_IMPLIED,             S65_SET_WDC65C00 },
-    { "BBS4",    0XCF, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB5",    0XD7, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "STP",     0XDB, S65_IMPLIED,             S65_SET_WDC65C00 },
-    { "BBS5",    0XDF, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB6",    0XE7, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBS6",    0XEF, S65_RELATIVE,            S65_SET_WDC65C00 },
-    { "SMB7",    0XF7, S65_ZEROPAGE,            S65_SET_WDC65C00 },
-    { "BBS7",    0XFF, S65_RELATIVE,            S65_SET_WDC65C00 },
-     The rest is NOP... To be defined */
+    { "JAM!",    0x02, S65_IMPLIED,     },
+    { "SLO!",    0x03, S65_INDIRECT_X,  },
+    { "NOP!",    0x04, S65_ZEROPAGE,    },
+    { "SLO!",    0x07, S65_ZEROPAGE,    },
+    { "ANC!",    0x0B, S65_IMMEDIATE,   },
+    { "NOP!",    0x0C, S65_ABSOLUTE,    },
+    { "SLO!",    0x0F, S65_ABSOLUTE,    },
+    { "JAM!",    0x12, S65_IMPLIED,     },
+    { "SLO!",    0x13, S65_INDIRECT_Y,  },
+    { "NOP!",    0x14, S65_ZEROPAGE_X,  },
+    { "SLO!",    0x17, S65_ZEROPAGE_X,  },
+    { "NOP!",    0x1A, S65_IMPLIED,     },
+    { "SLO!",    0x1B, S65_ABSOLUTE_Y,  },
+    { "NOP!",    0x1C, S65_ABSOLUTE_X,  },
+    { "SLO!",    0x1F, S65_ABSOLUTE_X,  },
+    { "JAM!",    0x22, S65_IMPLIED,     },
+    { "RLA!",    0x23, S65_INDIRECT_X,  },
+    { "RLA!",    0x27, S65_ZEROPAGE,    },
+    { "ANC!",    0x2B, S65_IMMEDIATE,   },
+    { "RLA!",    0x2F, S65_ABSOLUTE,    },
+    { "JAM!",    0x32, S65_IMPLIED,     },
+    { "RLA!",    0x33, S65_INDIRECT_Y,  },
+    { "NOP!",    0x34, S65_ZEROPAGE_X,  },
+    { "RLA!",    0x37, S65_ZEROPAGE_X,  },
+    { "NOP!",    0x3A, S65_IMPLIED,     },
+    { "RLA!",    0x3B, S65_ABSOLUTE_Y,  },
+    { "NOP!",    0x3C, S65_ABSOLUTE_X,  },
+    { "RLA!",    0x3F, S65_ABSOLUTE_X,  },
+    { "JAM!",    0x42, S65_IMPLIED,     },
+    { "SRE!",    0x43, S65_INDIRECT_X,  },
+    { "NOP!",    0x44, S65_ZEROPAGE,    },
+    { "SRE!",    0x47, S65_ZEROPAGE,    },
+    { "ALR!",    0x4B, S65_IMMEDIATE,   },
+    { "SRE!",    0x4F, S65_ABSOLUTE,    },
+    { "JAM!",    0x52, S65_IMPLIED,     },
+    { "SRE!",    0x53, S65_INDIRECT_Y,  },
+    { "NOP!",    0x54, S65_ZEROPAGE_X,  },
+    { "SRE!",    0x57, S65_ZEROPAGE_X,  },
+    { "NOP!",    0x5A, S65_IMPLIED,     },
+    { "SRE!",    0x5B, S65_ABSOLUTE_Y,  },
+    { "NOP!",    0x5C, S65_ABSOLUTE_X,  },
+    { "SRE!",    0x5F, S65_ABSOLUTE_X,  },
+    { "JAM!",    0x62, S65_IMPLIED,     },
+    { "RRA!",    0x63, S65_INDIRECT_X,  },
+    { "NOP!",    0x64, S65_ZEROPAGE,    },
+    { "RRA!",    0x67, S65_ZEROPAGE,    },
+    { "ARR!",    0x6B, S65_IMMEDIATE,   },
+    { "RRA!",    0x6F, S65_ABSOLUTE,    },
+    { "JAM!",    0x72, S65_IMPLIED,     },
+    { "RRA!",    0x73, S65_INDIRECT_Y,  },
+    { "NOP!",    0x74, S65_ZEROPAGE_X,  },
+    { "RRA!",    0x77, S65_ZEROPAGE_X,  },
+    { "NOP!",    0x7A, S65_IMPLIED,     },
+    { "RRA!",    0x7B, S65_ABSOLUTE_Y,  },
+    { "NOP!",    0x7C, S65_ABSOLUTE_X,  },
+    { "RRA!",    0x7F, S65_ABSOLUTE_X,  },
+    { "NOP!",    0x80, S65_IMMEDIATE,   },
+    { "NOP!",    0x82, S65_IMMEDIATE,   },
+    { "SAX!",    0x83, S65_INDIRECT_X,  },
+    { "SAX!",    0x87, S65_ZEROPAGE,    },
+    { "NOP!",    0x89, S65_IMMEDIATE,   },
+    { "ANE!",    0x8B, S65_IMMEDIATE,   },
+    { "SAX!",    0x8F, S65_ABSOLUTE,    },
+    { "JAM!",    0x92, S65_IMPLIED,     },
+    { "SHA!",    0x93, S65_INDIRECT_Y,  },
+    { "SAX!",    0x97, S65_ZEROPAGE_Y,  },
+    { "TAS!",    0x9B, S65_ABSOLUTE_Y,  },
+    { "SHY!",    0x9C, S65_ABSOLUTE_X,  },
+    { "SHX!",    0x9E, S65_ABSOLUTE_Y,  },
+    { "SHA!",    0x9F, S65_ABSOLUTE_Y,  },
+    { "LAX!",    0xA3, S65_INDIRECT_X,  },
+    { "LAX!",    0xA7, S65_ZEROPAGE,    },
+    { "LXA!",    0xAB, S65_IMMEDIATE,   },
+    { "LAX!",    0xAF, S65_ABSOLUTE,    },
+    { "JAM!",    0xB2, S65_IMPLIED,     },
+    { "LAX!",    0xB3, S65_INDIRECT_Y,  },
+    { "LAX!",    0xB7, S65_ZEROPAGE_Y,  },
+    { "LAS!",    0xBB, S65_ABSOLUTE_Y,  },
+    { "LAX!",    0xBF, S65_ABSOLUTE_Y,  },
+    { "NOP!",    0xC2, S65_IMMEDIATE,   },
+    { "DCP!",    0xC3, S65_INDIRECT_X,  },
+    { "DCP!",    0xC7, S65_ZEROPAGE,    },
+    { "SBX!",    0xCB, S65_IMMEDIATE,   },
+    { "DCP!",    0xCF, S65_ABSOLUTE,    },
+    { "JAM!",    0xD2, S65_IMPLIED,     },
+    { "DCP!",    0xD3, S65_INDIRECT_Y,  },
+    { "NOP!",    0xD4, S65_ZEROPAGE_X,  },
+    { "DCP!",    0xD7, S65_ZEROPAGE_X,  },
+    { "NOP!",    0xDA, S65_IMPLIED,     },
+    { "DCP!",    0xDB, S65_ABSOLUTE_Y,  },
+    { "NOP!",    0xDC, S65_ABSOLUTE_X,  },
+    { "DCP!",    0xDF, S65_ABSOLUTE_X,  },
+    { "NOP!",    0xE2, S65_IMMEDIATE,   },
+    { "ISC!",    0xE3, S65_INDIRECT_X,  },
+    { "ISC!",    0xE7, S65_ZEROPAGE,    },
+    { "SBC!",    0xEB, S65_IMMEDIATE,   },
+    { "ISC!",    0xEF, S65_ABSOLUTE,    },
+    { "JAM!",    0xF2, S65_IMPLIED,     },
+    { "ISC!",    0xF3, S65_INDIRECT_Y,  },
+    { "NOP!",    0xF4, S65_ZEROPAGE_X,  },
+    { "ISC!",    0xF7, S65_ZEROPAGE_X,  },
+    { "NOP!",    0xFA, S65_IMPLIED,     },
+    { "ISC!",    0xFB, S65_ABSOLUTE_Y,  },
+    { "NOP!",    0xFC, S65_ABSOLUTE_X,  },
+    { "ISC!",    0xFF, S65_ABSOLUTE_X,  }
 };
 
 
@@ -383,49 +317,20 @@ op_result_t *s65_op_add(op_result_t *rop_dest, optype_t ot_type, addr_t ad_first
 
 /* Translates an instruction.
  *
- * @param dt_memory     memory space
- * @param st_set        instruction set
+ * @param b_opcode      the OPCODE
  * 
  * @returns Valid instruction type or
  * NULL if failed.
  */
-const instruction_t *s65_decode(const data_t *dt_memory, instruction_set_t st_set)
+const instruction_t *s65_decode(byte b_opcode)
 {
-    assert(dt_memory);
-    assert(S65_MEM_SPACE < dt_memory->sz_bksize);
-
-    /* The program counter value */
-    word wd_pc = dt_memory->pb_block[S65_REG_PCL];
-
     /* Target instruction */
     const instruction_t *tmp_inst = NULL;
-    /* The OPCODE */
-    const byte tmp_opcode = dt_memory->pb_block[wd_pc];
 
     /* Finding the OPCODE (as 6500) */
     for(size_t i = 0; i < sizeof(gc_instructions) / sizeof(gc_instructions[0]); ++i)
     {
-        if(gc_instructions[i].b_opcode == tmp_opcode)
-        {
-            tmp_inst = &gc_instructions[i];
-            break;
-        }
-    }
-    /* Finding the OPCODE (as 65C00 if set) */
-    for(size_t i = 0; st_set >= S65_SET_65C00 && i < sizeof(gc_instructions) / sizeof(gc_instructions[0]); ++i)
-    {
-        if(gc_instructions[i].b_opcode == tmp_opcode &&
-            gc_instructions[i].st_set == S65_SET_65C00)
-        {
-            tmp_inst = &gc_instructions[i];
-            break;
-        }
-    }
-    /* Finding the OPCODE (as WDC65C00 if set) */
-    for(size_t i = 0; st_set == S65_SET_WDC65C00 && i < sizeof(gc_instructions) / sizeof(gc_instructions[0]); ++i)
-    {
-        if(gc_instructions[i].b_opcode == tmp_opcode &&
-            gc_instructions[i].st_set == S65_SET_WDC65C00)
+        if(gc_instructions[i].b_opcode == b_opcode)
         {
             tmp_inst = &gc_instructions[i];
             break;
@@ -435,22 +340,18 @@ const instruction_t *s65_decode(const data_t *dt_memory, instruction_set_t st_se
     return tmp_inst;
 }
 
-/* Converts an instruction into the list
+/* Converts an instruction into a list
  * of operations.
  *
- * @param dt_memory     memory space
- * @param st_set        instruction set
+ * @param b_opcode      the OPCODE
  * 
  * @returns Valid pointer to op_result or 
  * NULL if failed.
  */
-op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
+op_result_t *s65_convert(byte b_opcode)
 {
-    assert(dt_memory);
-    assert(S65_MEM_SPACE <= dt_memory->sz_bksize);
-
     /* The instruction */
-    const instruction_t *instr = s65_decode(dt_memory, st_set);
+    const instruction_t *instr = s65_decode(b_opcode);
 
     /* The result */
     op_result_t *rop_result = s65_new_opresult(0u);
@@ -796,12 +697,8 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* [T4] */ d_cycle++;
 
-            /* Incrementing indirect address (JMP bug here) */
-            s65_op_add(rop_result, S65_OP_INC,          S65_REG_ADL,    S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
-
-            /* Setting address bus to indirect address */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABH,    S65_REG_ADH,                    d_cycle, S65_OPFLAG_READ                        );
+            /* Incrementing bus address low (JMP bug here) */
+            s65_op_add(rop_result, S65_OP_INC,          S65_REG_ABL,    S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ                        );
             /* Reading address high */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
@@ -992,14 +889,14 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* [T3] */ d_cycle++;
             
-            /* Adding X without C to address bus low */
+            /* Adding X without C' to address bus low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    S65_REG_X,                      d_cycle, S65_OPFLAG_READ                        );
             /* Reading effective addres low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
             /* [T4] */ d_cycle++;
 
-            /* Adding 1 without C to address bus low */
+            /* Adding 1 without C' to address bus low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading effective addres high */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
@@ -1083,7 +980,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             
             /* [T3] */ d_cycle++;
 
-            /* Adding index register without C to base address low */
+            /* Adding index register without C' to base address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    ad_idx,                         d_cycle, S65_OPFLAG_WRITE                       );
             /* Setting address bus to calculated address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_WRITE                       );
@@ -1247,13 +1144,13 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
         
         /* Incrementing PC */
         s65_op_add(rop_result, S65_OP_PC_INC,      S65_REG_NULL,   S65_REG_NULL,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND   );
-        /* Adding U2 number (the offset) without C to PC */
+        /* Adding U2 number (the offset) without C' to PC */
         s65_op_add(rop_result, S65_OP_AD2,         S65_REG_PCL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND   );                  
 
         /* [T3] */ d_cycle++;
         /* Bypassed if page not crossed */
 
-        /* Adding C to PC if crossed the page */
+        /* Adding C' to PC if crossed the page */
         s65_op_add(rop_result, S65_OP_AD2C,        S65_REG_PCH,    0x00,                           d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND | S65_OPFLAG_IF_CROSSED);
 
         /* [T0] */
@@ -1376,7 +1273,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             
             /* [T3] */ d_cycle++;
 
-            /* Adding index register without C to base address low */
+            /* Adding index register without C' to base address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    S65_REG_X,                      d_cycle, S65_OPFLAG_READ                        );
             /* Setting address bus to calculated address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
@@ -1552,14 +1449,14 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
 
             /* [T3] */ d_cycle++;
             
-            /* Adding X without C to address bus low */
+            /* Adding X without C' to address bus low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    S65_REG_X,                      d_cycle, S65_OPFLAG_READ                        );
-            /* Reading effective addres low */
-            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
 
             /* [T4] */ d_cycle++;
 
-            /* Adding 1 without C to address bus low */
+            /* Reading effective addres low */
+            s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADL,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
+            /* Adding 1 without C' to address bus low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ABL,    0x01,                           d_cycle, S65_OPFLAG_READ                        );
             /* Reading effective addres high */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ADH,    S65_REG_DATA,                   d_cycle, S65_OPFLAG_READ                        );
@@ -1648,7 +1545,7 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
             
             /* [T3] */ d_cycle++;
 
-            /* Adding index register without C to base address low */
+            /* Adding index register without C' to base address low */
             s65_op_add(rop_result, S65_OP_ADD,          S65_REG_ADL,    ad_idx,                         d_cycle, S65_OPFLAG_READ                        );
             /* Setting address bus to calculated address low */
             s65_op_add(rop_result, S65_OP_LOAD,         S65_REG_ABL,    S65_REG_ADL,                    d_cycle, S65_OPFLAG_READ                        );
@@ -1782,8 +1679,305 @@ op_result_t *s65_convert(const data_t *dt_memory, instruction_set_t st_set)
     return rop_result;
 }
 
+/* Converts an interruption into a list
+ * of operations.
+ *
+ * @param b_int      the interruption type (S65_INT_*)
+ * 
+ * @returns Valid pointer to op_result or 
+ * NULL if failed.
+ */
+const op_result_t *s65_convert_int(byte b_int)
+{
+    /* RESET operation list */
+    static op_result_t *rop_res = NULL;
+    /* NMI operation list */
+    static op_result_t *rop_nmi = NULL;
+    /* IRQ operation list */
+    static op_result_t *rop_irq = NULL;
+
+    /* Filling the lists if it has not been
+     * done yet
+     */
+    if(rop_res == NULL)
+    {
+        if((rop_res = s65_new_opresult(0u)) == NULL)
+        {
+            /* Fail */
+            return NULL;
+        }
+
+        /* Filling RESET 
+         * (based on vidual6502.org)
+         */
+
+        int d_cycle = 0;
+
+        /* [T0] */
+
+        /* Setting SP to 0x00 */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_SP,         0x00,           d_cycle, S65_OPFLAG_READ                   );
+        /* Setting PC to 0x00FF */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_PCL,        0xFF,           d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_PCH,        0x00,           d_cycle, S65_OPFLAG_READ                   );
+        /* Setting address bus to PC and discarding */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T1] */ d_cycle++;
+
+        /* Setting address bus to PC and discarding again */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T2] */ d_cycle++;
+
+        /* Setting address bus to PC and discarding again */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T3] */ d_cycle++;
+
+        /* Setting address bus to 9-bit SP (0x100) and discarding */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T4] */ d_cycle++;
+
+        /* Decrementing SP (0x00 --> 0xFF / 0x100 --> 0x1FF) */
+        s65_op_add(rop_res, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_READ                   );
+        /* Setting address bus to 9-bit SP (0x1FF) and discarding */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T5] */ d_cycle++;
+
+        /* Decrementing SP (0xFF --> 0xFE / 0x1FF --> 0x1FE) */
+        s65_op_add(rop_res, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_READ                   );
+        /* Setting address bus to 9-bit SP (0x1FE) and discarding */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T6] */ d_cycle++;
+
+        /* Decrementing SP (0xFE --> 0xFD / 0x1FE --> 0x1FD) */
+        s65_op_add(rop_res, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_READ                   );
+        /* Setting address bus to reset vector (0xFFFC) */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_RES),  d_cycle, S65_OPFLAG_READ          );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_RES), d_cycle, S65_OPFLAG_READ          );
+        /* Reading address low */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ADL,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T7] */ d_cycle++;
+
+        /* Setting address bus to reset vector + 1 (0xFFFD) */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_RES + 1u),  d_cycle, S65_OPFLAG_READ     );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_RES + 1u), d_cycle, S65_OPFLAG_READ     );
+        /* Reading address high */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_ADH,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ                   );
+        /* Setting I flag */
+        s65_op_add(rop_res, S65_OP_SET,       S65_REG_SREG,      S65_SREG_I,      d_cycle, S65_OPFLAG_READ                   );
+        /* Clearing D flag */
+        s65_op_add(rop_res, S65_OP_CLEAR,     S65_REG_SREG,      S65_SREG_D,      d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T0] */
+
+        /* Updating PC */
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_PCL,        S65_REG_ADL,    0      , S65_OPFLAG_READ                   );
+        s65_op_add(rop_res, S65_OP_LOAD,      S65_REG_PCH,        S65_REG_ADH,    0      , S65_OPFLAG_READ                   );
+
+        /* Instruction execution at PC */
+    }
+
+    if(rop_nmi == NULL)
+    {
+        if((rop_nmi = s65_new_opresult(0u)) == NULL)
+        {
+            /* Fail */
+            return NULL;
+        }
+
+        /* Filling NMI */
+
+        int d_cycle = 0;
+
+        /* [T0] */
+
+        /* Setting address bus to PC and discarding */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T1] */ d_cycle++;
+
+        /* Setting address bus to 9-bit SP and discarding */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T2] */ d_cycle++;
+
+        /* Decrementing SP  */
+        s65_op_add(rop_nmi, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_WRITE                  );
+        /* Setting address bus to 9-bit SP */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_WRITE                  );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_WRITE                  );
+        /* Pushing PCH */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_DATA,      S65_REG_PCH,     d_cycle, S65_OPFLAG_WRITE                  );
+
+        /* [T3] */ d_cycle++;
+
+        /* Decrementing SP  */
+        s65_op_add(rop_nmi, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_WRITE                  );
+        /* Setting address bus to 9-bit SP */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_WRITE                  );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_WRITE                  );
+        /* Pushing PCL */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_DATA,      S65_REG_PCL,     d_cycle, S65_OPFLAG_WRITE                  );
+
+        /* [T4] */ d_cycle++;
+
+        /* Decrementing SP  */
+        s65_op_add(rop_nmi, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_WRITE                  );
+        /* Setting address bus to 9-bit SP */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_WRITE                  );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_WRITE                  );
+        /* Pushing SREG */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_DATA,      S65_REG_SREG,    d_cycle, S65_OPFLAG_WRITE                  );
+
+        /* [T5] */ d_cycle++;
+
+        /* Setting address bus to reset vector */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_NMI),  d_cycle, S65_OPFLAG_READ     );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_NMI), d_cycle, S65_OPFLAG_READ     );
+        /* Reading address low */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ADL,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ                   );
+        /* Setting I flag */
+        s65_op_add(rop_nmi, S65_OP_SET,       S65_REG_SREG,      S65_SREG_I,      d_cycle, S65_OPFLAG_READ                   );
+        /* Clearing D flag */
+        s65_op_add(rop_nmi, S65_OP_CLEAR,     S65_REG_SREG,      S65_SREG_D,      d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T6] */ d_cycle++;
+
+        /* Setting address bus to reset vector + 1 */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_NMI + 1u),  d_cycle, S65_OPFLAG_READ     );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_NMI + 1u), d_cycle, S65_OPFLAG_READ     );
+        /* Reading address high */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_ADH,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ                   );
+
+        /* [T0] */ d_cycle++;
+
+        /* Updating PC */
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_PCL,        S65_REG_ADL,    d_cycle, S65_OPFLAG_READ                   );
+        s65_op_add(rop_nmi, S65_OP_LOAD,      S65_REG_PCH,        S65_REG_ADH,    d_cycle, S65_OPFLAG_READ                   );
+
+        /* Instruction execution at PC */
+    }
+
+    if(rop_irq == NULL)
+    {
+        if((rop_irq = s65_new_opresult(0u)) == NULL)
+        {
+            /* Fail */
+            return NULL;
+        }
+
+        /* Filling NMI 
+         * (very similar to NMI, but with I flag)
+         */
+
+        int d_cycle = 0;
+
+        /* [T0] */
+
+        /* Checking if I if off (interruptions enabled) */
+        s65_op_add(rop_irq, S65_OP_BIT_SREG_NOT, S65_SREG_I,      S65_REG_NULL,   d_cycle, S65_OPFLAG_READ                   );
+
+        /* All the operations below are skipped,
+         * if I is set
+         */
+
+        /* Setting address bus to PC and discarding */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABL,        S65_REG_PCL,    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABH,        S65_REG_PCH,    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+
+        /* [T1] */ d_cycle++;
+
+        /* Setting address bus to 9-bit SP and discarding */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+
+        /* [T2] */ d_cycle++;
+
+        /* Decrementing SP  */
+        s65_op_add(rop_irq, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        /* Setting address bus to 9-bit SP */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        /* Pushing PCH */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_DATA,      S65_REG_PCH,     d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+
+        /* [T3] */ d_cycle++;
+
+        /* Decrementing SP  */
+        s65_op_add(rop_irq, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        /* Setting address bus to 9-bit SP */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        /* Pushing PCL */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_DATA,      S65_REG_PCL,     d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+
+        /* [T4] */ d_cycle++;
+
+        /* Decrementing SP  */
+        s65_op_add(rop_irq, S65_OP_DEC,       S65_REG_SP,        S65_REG_NULL,    d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        /* Setting address bus to 9-bit SP */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABL,       S65_REG_SP,      d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABH,       0x01,            d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+        /* Pushing SREG */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_DATA,      S65_REG_SREG,    d_cycle, S65_OPFLAG_WRITE | S65_OPFLAG_IF_COND);
+
+        /* [T5] */ d_cycle++;
+
+        /* Setting address bus to reset vector */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_BRK),  d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_BRK), d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+        /* Reading address low */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ADL,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ  | S65_OPFLAG_IF_COND);
+        /* Setting I flag */
+        s65_op_add(rop_irq, S65_OP_SET,       S65_REG_SREG,      S65_SREG_I,      d_cycle, S65_OPFLAG_READ  | S65_OPFLAG_IF_COND);
+        /* Clearing D flag */
+        s65_op_add(rop_irq, S65_OP_CLEAR,     S65_REG_SREG,      S65_SREG_D,      d_cycle, S65_OPFLAG_READ  | S65_OPFLAG_IF_COND);
+
+        /* [T6] */ d_cycle++;
+
+        /* Setting address bus to reset vector + 1 */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABL,       S65_LOW(S65_VECTOR_BRK + 1u),  d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ABH,       S65_HIGH(S65_VECTOR_BRK + 1u), d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+        /* Reading address high */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_ADH,       S65_REG_DATA,    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+
+        /* [T0] */ d_cycle++;
+
+        /* Updating PC */
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_PCL,        S65_REG_ADL,    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+        s65_op_add(rop_irq, S65_OP_LOAD,      S65_REG_PCH,        S65_REG_ADH,    d_cycle, S65_OPFLAG_READ | S65_OPFLAG_IF_COND);
+
+        /* Instruction execution at PC */
+    }
+
+    /* Returning */
+    switch (b_int)
+    {
+    case S65_INT_RESET:
+        return rop_res;
+    case S65_INT_NMI:
+        return rop_nmi;
+    default:
+        return rop_irq;
+    }
+}
+
 /* Gives one operation, unique for given 
- * instruction (ADC, AND, ROL etc.).
+ * instruction (ASL, CLI, TAY etc.).
  *
  * @param in_instr      the instruction
  * 
